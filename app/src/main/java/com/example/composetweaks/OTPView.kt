@@ -73,18 +73,25 @@ fun OTPView(
                     value = text.tryGet(index),
                     onValueChange = {
                         if (it.length == 1) {
+                            //  it means user is typing the otp, so move the focus to next tf as the otp is entered
                             focuses[index].freeFocus()
                             if (index < numberOfFields - 1)
                                 focuses[index + 1].requestFocus()
                             else
                                 focusManager.clearFocus(force = true)
+
+                            text += it
+                        } else if (it.length == numberOfFields) {
+                            //means user is pasting the otp, so use the text and clear focus.
+                            text = it
+                            focusManager.clearFocus(true)
                         }
-                        text += it
                     },
                     modifier = Modifier
                         .focusRequester(focuses[index])
                         .onKeyEvent { event ->
                             if (event.key == Key.Backspace) {
+                                //move focus to prev tf and drop the last digit from otp
                                 if (index > 0)
                                     focuses[index - 1].requestFocus()
                                 else
@@ -112,9 +119,9 @@ fun OTPView(
                             LaunchedEffect(interactionSource) {
                                 interactionSource.interactions.collect {
                                     if (it is PressInteraction.Release) {
-                                        if (index > 0 && text.isEmpty())
+                                        if (index > 0 && text.isEmpty()) //force the focus to go to first tf even if user click on any other field if the text is empty yet
                                             focuses[0].requestFocus()
-                                        else if ( text.length < numberOfFields - 1)
+                                        else if (text.length < numberOfFields - 1) //focus the tf next to the previously filled field even if user clicks any other field.
                                             focuses[text.length].requestFocus()
                                     }
                                 }
