@@ -91,11 +91,16 @@ fun OTPView(
                         .focusRequester(focuses[index])
                         .onKeyEvent { event ->
                             if (event.key == Key.Backspace) {
-                                //move focus to prev tf and drop the last digit from otp
-                                if (index > 0)
-                                    focuses[index - 1].requestFocus()
-                                else
+                                if (index > 0) {
+                                    if (index == text.length - 1)  //move focus to prev tf and drop the last digit from otp
+                                        focuses[index - 1].requestFocus()
+                                    else { //move the focus to the field from which the letter is removed
+                                        focuses[text.length - 1].requestFocus()
+                                    }
+                                } else
                                     focusManager.clearFocus(true)
+
+
                                 text = text.dropLast(1)
                             }
                             true
