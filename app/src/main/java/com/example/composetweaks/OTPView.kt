@@ -6,7 +6,6 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -55,16 +54,14 @@ fun OTPView(
 
 
     Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(16.dp),
+        modifier = Modifier.fillMaxWidth(),
         horizontalArrangement = Arrangement.spacedBy(8.dp)
     ) {
         repeat(numberOfFields) { index ->
             OutlinedTextField(
                 value = otp.tryGet(index),
                 onValueChange = {
-                    if(otp.length <= numberOfFields ) {
+                    if (otp.length <= numberOfFields) {
                         if (it.length == 1) {
                             //  it means user is typing the otp, so move the focus to next tf as the otp is entered
                             focuses[index].freeFocus()
