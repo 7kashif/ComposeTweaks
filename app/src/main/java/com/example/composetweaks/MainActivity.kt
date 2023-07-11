@@ -10,8 +10,8 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         setContent {
             ComposeTweaksTheme {
-               OTPView(numberOfFields = 5){}
-//                CustomSlider()
+//               OTPView(numberOfFields = 5){}
+                FilledSlider {}
             }
         }
     }
