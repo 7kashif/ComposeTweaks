@@ -32,10 +32,13 @@ import androidx.compose.ui.unit.dp
 
 @Composable
 fun RatingBarEditable(
-    rating: Float = 1.5f,
+    rating: Float = 3f,
     maxRating: Int = 5,
     starSize: Dp = 32.dp,
     isEditable: Boolean = true,
+    isDraggable: Boolean = true, //whether or not be editable by dragging
+    roundOffToWholeNumber: Boolean = false, //will round off to whole star instead of float point
+    ratingColor: Color = Color.Gray,
     onValueChange: (Float) -> Unit
 ) {
     var ratingChange by remember(key1 = rating) {
@@ -44,8 +47,9 @@ fun RatingBarEditable(
 
     Row(
         modifier = Modifier.pointerInput(Unit) {
-            if (isEditable) {
+            if (isEditable && isDraggable) {
                 detectHorizontalDragGestures { change, _ ->
+                    //converting the value in range of 0 to row's width to the range of 0 to maxRating
                     val cc = change.position.x.convertToRange(
                         oldRangeStart = 0f,
                         oldRangeEnd = size.width.toFloat(),
@@ -67,7 +71,7 @@ fun RatingBarEditable(
                 modifier = Modifier
                     .clip(StarShape())
                     .size(starSize)
-                    .border(1.dp, Color.Gray, StarShape())
+                    .border(1.dp,ratingColor, StarShape())
             ) {
                 Canvas(
                     modifier = Modifier
@@ -76,7 +80,11 @@ fun RatingBarEditable(
                         .pointerInput(Unit) {
                             if (isEditable) {
                                 detectTapGestures {
-                                    ratingChange = index.toFloat() + (it.x / size.width)
+                                    ratingChange = if(roundOffToWholeNumber)
+                                        (index + 1).toFloat()
+                                    else
+                                        index.toFloat() + (it.x / size.width)
+
                                     onValueChange(ratingChange)
                                 }
                             }
@@ -84,7 +92,7 @@ fun RatingBarEditable(
                 ) {
                     drawIntoCanvas {
                         drawRect(
-                            color = Color.Gray,
+                            color = ratingColor,
                             size = Size(
                                 width =
                                 if (index < ratingChange.toInt())
@@ -103,14 +111,26 @@ fun RatingBarEditable(
     }
 }
 
+
+/**
+ * Round a value from a range to different range
+ *
+ * e.g, rounding 50 in range of 0 to 100 to the range of 0 to 10 (which will result 5).
+ */
 fun Float.convertToRange(
     oldRangeStart: Float,
     oldRangeEnd: Float,
-    newRangeEnd: Float,
-    newRangeStart: Float
+    newRangeStart: Float,
+    newRangeEnd: Float
 ) =
     newRangeStart + (this - oldRangeStart) * (newRangeEnd - newRangeStart) / (oldRangeEnd - oldRangeStart)
 
+
+/**
+ * Forcing a value to be in specific range.
+ *
+ * e.g, rounding the value to 5 if it is greater than 5 and 0 if it is less than 0
+ */
 fun Float.roundToRange(max: Float, min: Float): Float {
     return when {
         this > max -> 5f
