@@ -2,13 +2,18 @@ package com.example.composetweaks
 
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.border
+import androidx.compose.foundation.gestures.detectHorizontalDragGestures
+import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.size
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.geometry.Offset
@@ -19,22 +24,44 @@ import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.graphics.PathOperation
 import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.graphics.drawscope.drawIntoCanvas
+import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 
 @Composable
-fun RatingStarInFloat(
+fun RatingBarEditable(
     rating: Float = 1.5f,
     maxRating: Int = 5,
-    starSize: Dp = 32.dp
+    starSize: Dp = 32.dp,
+    isEditable: Boolean = true,
+    onValueChange: (Float) -> Unit
 ) {
+    var ratingChange by remember(key1 = rating) {
+        mutableStateOf(rating)
+    }
+
     Row(
-        modifier = Modifier.fillMaxWidth(),
+        modifier = Modifier.pointerInput(Unit) {
+            if (isEditable) {
+                detectHorizontalDragGestures { change, _ ->
+                    val cc = change.position.x.convertToRange(
+                        oldRangeStart = 0f,
+                        oldRangeEnd = size.width.toFloat(),
+                        newRangeStart = 0f,
+                        newRangeEnd = maxRating.toFloat()
+                    )
+
+                    ratingChange = cc.roundToRange(maxRating.toFloat(), 0f)
+
+                    onValueChange(ratingChange)
+
+                }
+            }
+        },
         horizontalArrangement = Arrangement.spacedBy(8.dp)
     ) {
-
         repeat(maxRating) { index ->
             Box(
                 modifier = Modifier
@@ -46,18 +73,26 @@ fun RatingStarInFloat(
                     modifier = Modifier
                         .clip(StarShape())
                         .fillMaxSize()
+                        .pointerInput(Unit) {
+                            if (isEditable) {
+                                detectTapGestures {
+                                    ratingChange = index.toFloat() + (it.x / size.width)
+                                    onValueChange(ratingChange)
+                                }
+                            }
+                        }
                 ) {
                     drawIntoCanvas {
                         drawRect(
                             color = Color.Gray,
                             size = Size(
                                 width =
-                                if (index < rating.toInt())
+                                if (index < ratingChange.toInt())
                                     this.size.width
-                                else if (index == rating.toInt())
-                                    this.size.width * (rating - rating.toInt())
+                                else if (index == ratingChange.toInt())
+                                    this.size.width * (ratingChange - ratingChange.toInt())
                                 else
-                                   0f,
+                                    0f,
                                 height = this.size.height
                             )
                         )
@@ -65,6 +100,22 @@ fun RatingStarInFloat(
                 }
             }
         }
+    }
+}
+
+fun Float.convertToRange(
+    oldRangeStart: Float,
+    oldRangeEnd: Float,
+    newRangeEnd: Float,
+    newRangeStart: Float
+) =
+    newRangeStart + (this - oldRangeStart) * (newRangeEnd - newRangeStart) / (oldRangeEnd - oldRangeStart)
+
+fun Float.roundToRange(max: Float, min: Float): Float {
+    return when {
+        this > max -> 5f
+        this < min -> 0f
+        else -> this
     }
 }
 

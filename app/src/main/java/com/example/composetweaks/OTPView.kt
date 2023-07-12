@@ -37,7 +37,7 @@ import androidx.compose.ui.unit.sp
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalComposeUiApi::class)
 @Composable
 fun OTPView(
-    numberOfFields: Int = 6,
+    numberOfFields: Int = 4,
     onValueChange: (String) -> Unit
 ) {
     var otp by remember {
