@@ -40,6 +40,27 @@ fun ConfettiAnimation() {
         }
     }
 
+    val randomsForSize = remember {
+        List(particleCount) {
+            Size(
+                Random.nextInt(-20, 20).toFloat(),
+                Random.nextInt(-20, 20).toFloat()
+            )
+        }
+    }
+
+    val randomXsForLine = remember {
+        List(particleCount) {
+            Random.nextInt(-30, 30)
+        }
+    }
+
+    val randomYsForLine = remember {
+        List(particleCount) {
+            Random.nextInt(-30, 30)
+        }
+    }
+
     val animation = rememberInfiniteTransition()
 
 
@@ -71,20 +92,27 @@ fun ConfettiAnimation() {
         Canvas(
             modifier = Modifier.fillMaxSize()
         ) {
+
             repeat(particleCount) {
                 drawRect(
                     color = colors[it],
-                    size = Size(20f, 20f),
-                    topLeft = Offset(
-                        tX[it].value,
-                        tY[it].value
-                    ),
+                    size = randomsForSize[it],
+                    topLeft = Offset(tX[it].value, tY[it].value)
                 )
+
+                drawLine(
+                    color = colors[it],
+                    start = Offset(tX[it].value, tY[it].value),
+                    end = Offset(
+                        tX[it].value + randomXsForLine[it],
+                        tY[it].value + randomYsForLine[it]
+                    ),
+                    strokeWidth = 2f
+                )
+
             }
         }
     }
-
-
 }
 
 @Composable
