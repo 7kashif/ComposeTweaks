@@ -1,4 +1,4 @@
-package com.example.composetweaks.ui.theme
+package com.example.composetweaks
 
 import androidx.compose.animation.core.InfiniteRepeatableSpec
 import androidx.compose.animation.core.InfiniteTransition
@@ -7,21 +7,16 @@ import androidx.compose.animation.core.animateFloat
 import androidx.compose.animation.core.rememberInfiniteTransition
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Canvas
-import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxWithConstraints
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.drawscope.DrawStyle
-import androidx.compose.ui.graphics.drawscope.Fill
-import androidx.compose.ui.graphics.drawscope.Stroke
-import androidx.compose.ui.graphics.drawscope.rotate
 import androidx.compose.ui.unit.dp
 import kotlin.random.Random
 
@@ -47,38 +42,58 @@ fun ConfettiAnimation() {
 
     val animation = rememberInfiniteTransition()
 
-    val tY = List(particleCount) {
-        randomTransitions(animation = animation)
-    }
 
-    val tX = List(particleCount) {
-        randomTransitions(animation = animation)
-    }
 
-    Canvas(
+    BoxWithConstraints(
         modifier = Modifier
             .fillMaxWidth()
-            .height(400.dp)
+            .height(400.dp),
+        propagateMinConstraints = false
     ) {
-        repeat(particleCount) {
-            drawRect(
-                color = colors[it],
-                size = Size(20f, 20f),
-                topLeft = Offset(
-                    tX[it].value,
-                    tY[it].value
-                ),
+        val tY = List(particleCount) {
+            randomTransitions(
+                animation = animation,
+                init = 0f,
+                from = constraints.maxHeight * 0.1f,
+                to = constraints.maxHeight * 0.8f
             )
         }
+
+        val tX = List(particleCount) {
+            randomTransitions(
+                animation = animation,
+                init = if (it % 2 == 0) constraints.maxWidth * 0.3f else constraints.maxWidth * 0.7f,
+                from = if (it % 2 == 0) constraints.maxWidth * 0.1f else constraints.maxWidth * 0.4f,
+                to = if (it % 2 == 0) constraints.maxWidth * 0.6f else constraints.maxWidth * 0.9f
+            )
+        }
+
+        Canvas(
+            modifier = Modifier.fillMaxSize()
+        ) {
+            repeat(particleCount) {
+                drawRect(
+                    color = colors[it],
+                    size = Size(20f, 20f),
+                    topLeft = Offset(
+                        tX[it].value,
+                        tY[it].value
+                    ),
+                )
+            }
+        }
     }
+
+
 }
 
 @Composable
-fun randomTransitions(animation: InfiniteTransition) = animation.animateFloat(
-    initialValue = 0f,
-    targetValue = Random.nextInt(0, 500).toFloat(),
-    animationSpec = InfiniteRepeatableSpec(
-        animation = tween(1400),
-        repeatMode = RepeatMode.Reverse
+fun randomTransitions(animation: InfiniteTransition, init: Float, from: Float, to: Float) =
+    animation.animateFloat(
+        initialValue = init,
+        targetValue = Random.nextInt(from.toInt(), to.toInt()).toFloat(),
+        animationSpec = InfiniteRepeatableSpec(
+            animation = tween(1400),
+            repeatMode = RepeatMode.Restart
+        )
     )
-)
