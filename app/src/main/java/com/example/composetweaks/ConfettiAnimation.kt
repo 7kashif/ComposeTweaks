@@ -30,10 +30,11 @@ private val listOfColor = listOf(
     Color.Magenta
 )
 
-private const val particleCount = 100
-
 @Composable
-fun ConfettiAnimation() {
+fun ConfettiAnimation(
+    particleCount: Int = 100
+) {
+
     val colors = remember {
         List(particleCount) {
             listOfColor.shuffled()[0]
@@ -74,7 +75,7 @@ fun ConfettiAnimation() {
         val tY = List(particleCount) {
             randomTransitions(
                 animation = animation,
-                init = 0f,
+                init = constraints.maxHeight.toFloat(),
                 from = constraints.maxHeight * 0.1f,
                 to = constraints.maxHeight * 0.8f
             )
