@@ -57,7 +57,8 @@ fun RatingBarEditable(
                         newRangeEnd = maxRating.toFloat()
                     )
 
-                    ratingChange = cc.roundToRange(maxRating.toFloat(), 0f)
+                    ratingChange =
+                        cc.coerceIn(maximumValue = maxRating.toFloat(), minimumValue = 0f)
 
                     onValueChange(ratingChange)
 
@@ -71,7 +72,7 @@ fun RatingBarEditable(
                 modifier = Modifier
                     .clip(StarShape())
                     .size(starSize)
-                    .border(1.dp,ratingColor, StarShape())
+                    .border(1.dp, ratingColor, StarShape())
             ) {
                 Canvas(
                     modifier = Modifier
@@ -80,7 +81,7 @@ fun RatingBarEditable(
                         .pointerInput(Unit) {
                             if (isEditable) {
                                 detectTapGestures {
-                                    ratingChange = if(roundOffToWholeNumber)
+                                    ratingChange = if (roundOffToWholeNumber)
                                         (index + 1).toFloat()
                                     else
                                         index.toFloat() + (it.x / size.width)
@@ -125,19 +126,6 @@ fun Float.convertToRange(
 ) =
     newRangeStart + (this - oldRangeStart) * (newRangeEnd - newRangeStart) / (oldRangeEnd - oldRangeStart)
 
-
-/**
- * Forcing a value to be in specific range.
- *
- * e.g, rounding the value to 5 if it is greater than 5 and 0 if it is less than 0
- */
-fun Float.roundToRange(max: Float, min: Float): Float {
-    return when {
-        this > max -> 5f
-        this < min -> 0f
-        else -> this
-    }
-}
 
 class StarShape : Shape {
     override fun createOutline(

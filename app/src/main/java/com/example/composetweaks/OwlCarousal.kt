@@ -1,29 +1,25 @@
 package com.example.composetweaks
 
-import android.util.Log
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
-import androidx.compose.foundation.gestures.detectDragGestures
-import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.pager.HorizontalPager
+import androidx.compose.foundation.pager.PagerState
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.unit.dp
-import kotlin.math.abs
+import androidx.compose.ui.util.lerp
+import kotlin.math.absoluteValue
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
@@ -31,57 +27,38 @@ fun OwlCarousal() {
     val pagerList by remember {
         mutableStateOf(listOf(Color.Black, Color.DarkGray, Color.Gray))
     }
-    val heightList = remember {
-        MutableList(pagerList.size) {
-            if (it == 0)
-                240.dp
-            else
-                220.dp
-        }
-    }
-    val pagerState = rememberPagerState()
-    var currentPageIndex by remember {
-        mutableStateOf(0)
-    }
-    var targetPageIndex by remember {
-        mutableStateOf(0)
-    }
 
-    LaunchedEffect(key1 = pagerState.isScrollInProgress) {
-        currentPageIndex = pagerState.currentPage
-        targetPageIndex = pagerState.targetPage
-        Log.e("pagerScroll", "current $currentPageIndex >>> target $targetPageIndex")
-    }
-
-    LaunchedEffect(key1 = pagerState.currentPageOffsetFraction) {
-
-        val fraction = abs(
-            (pagerState.currentPageOffsetFraction * 100).convertToRange(
-                oldRangeStart = 0f,
-                oldRangeEnd = 50f,
-                newRangeStart = 0f,
-                newRangeEnd = 20f
-            )
-        )
-
-        heightList[currentPageIndex] = 220.dp - fraction.dp
-        heightList[targetPageIndex] = 220.dp + fraction.dp
-    }
+    val pagerState = rememberPagerState(Int.MAX_VALUE / 2)
 
     HorizontalPager(
-        pageCount = pagerList.size,
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(top = 200.dp),
+        pageCount = Int.MAX_VALUE,
+        modifier = Modifier.fillMaxWidth(),
         state = pagerState,
         contentPadding = PaddingValues(horizontal = 64.dp)
     ) {
         Box(
             modifier = Modifier
-                .height(heightList[it])
+                .carouselTransition(it, pagerState)
+                .height(200.dp)
                 .fillMaxWidth()
-                .background(pagerList[it])
+                .background(pagerList[it % pagerList.size])
         )
     }
-
 }
+
+
+@OptIn(ExperimentalFoundationApi::class)
+fun Modifier.carouselTransition(page: Int, pagerState: PagerState) =
+    graphicsLayer {
+        val pageOffset =
+            ((pagerState.currentPage - page) + pagerState.currentPageOffsetFraction).absoluteValue
+
+        val transformation =
+            lerp(
+                start = 0.85f,
+                stop = 1f,
+                fraction = 1f - pageOffset.coerceIn(0f, 1f)
+            )
+        alpha = transformation
+        scaleY = transformation
+    }

@@ -16,27 +16,27 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         setContent {
             ComposeTweaksTheme {
-                OwlCarousal()
-//                LazyColumn(
-//                    modifier = Modifier.fillMaxSize(),
-//                    verticalArrangement = Arrangement.spacedBy(32.dp),
-//                ) {
-////                    item {
-////                        OTPView {}
-////                    }
-////                    item {
-////                        FilledSlider {}
-////                    }
-////                    item {
-////                        RatingBarEditable {}
-////                    }
-////                    item{
-////                        ConfettiAnimation()
-////                    }
-//                    item {
-//
-//                    }
-//                }
+                LazyColumn(
+                    modifier = Modifier.fillMaxSize(),
+                    verticalArrangement = Arrangement.spacedBy(32.dp),
+                    contentPadding = PaddingValues(vertical = 16.dp, horizontal = 24.dp)
+                ) {
+                    item {
+                        OTPView {}
+                    }
+                    item {
+                        FilledSlider {}
+                    }
+                    item {
+                        RatingBarEditable {}
+                    }
+                    item{
+                        ConfettiAnimation()
+                    }
+                    item {
+                        OwlCarousal()
+                    }
+                }
             }
         }
     }
