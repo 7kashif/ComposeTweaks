@@ -22,20 +22,23 @@ class MainActivity : ComponentActivity() {
                     contentPadding = PaddingValues(vertical = 16.dp, horizontal = 24.dp)
                 ) {
                     item {
-                        OTPView {}
+                        GeneralPlaceHolder()
                     }
-                    item {
-                        FilledSlider {}
-                    }
-                    item {
-                        RatingBarEditable {}
-                    }
-                    item{
-                        ConfettiAnimation()
-                    }
-                    item {
-                        OwlCarousal()
-                    }
+//                    item {
+//                        OTPView {}
+//                    }
+//                    item {
+//                        FilledSlider {}
+//                    }
+//                    item {
+//                        RatingBarEditable {}
+//                    }
+//                    item{
+//                        ConfettiAnimation()
+//                    }
+//                    item {
+//                        OwlCarousal()
+//                    }
                 }
             }
         }
