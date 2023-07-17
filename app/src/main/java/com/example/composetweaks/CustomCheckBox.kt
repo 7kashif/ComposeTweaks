@@ -1,11 +1,15 @@
 package com.example.composetweaks
 
 import androidx.annotation.DrawableRes
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.EnterTransition
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -17,47 +21,46 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 
 @Composable
 fun CustomCheckBox(
     modifier: Modifier = Modifier,
-    checked: Boolean = false,
+    size: Dp = 24.dp,
     checkedBgColor: Color = Color.DarkGray,
     unCheckedBgColor: Color = Color.White,
-    borderColor: Color = Color.Gray,
-    @DrawableRes icon: Int,
+    borderColor: Color = Color.DarkGray,
+    @DrawableRes icon: Int = R.drawable.ic_check,
+    checked: Boolean = false,
     onCheckedChange: (Boolean) -> Unit,
 ) {
     Box(
         modifier = modifier
+            .size(size)
             .clip(RoundedCornerShape(6.dp))
             .clickable {
                 onCheckedChange(!checked)
             }
             .run {
                 if (checked) {
-                    border(
-                        width = 1.5.dp,
-                        color = checkedBgColor,
-                        shape = RoundedCornerShape(6.dp)
-                    )
                     background(color = checkedBgColor)
                 } else {
-                    border(width = 1.5.dp, color = borderColor, shape = RoundedCornerShape(6.dp))
                     background(color = unCheckedBgColor)
+                    border(width = 1.5.dp, color = borderColor, shape = RoundedCornerShape(6.dp))
                 }
-            }
-            .padding(6.dp),
+            },
         contentAlignment = Alignment.Center
     ) {
-        if (checked)
-            Image(
-                painter = painterResource(id = icon),
-                contentDescription = null,
-                contentScale = ContentScale.FillBounds,
-                modifier = Modifier.size(12.dp)
-            )
+        Column {
+            AnimatedVisibility(visible = checked) {
+                Image(
+                    painter = painterResource(id = icon),
+                    contentDescription = null,
+                    contentScale = ContentScale.FillBounds,
+                    modifier = Modifier.fillMaxSize().padding(6.dp)
+                )
+            }
+        }
     }
-
 }
