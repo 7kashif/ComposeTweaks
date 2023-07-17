@@ -30,7 +30,7 @@ class MainActivity : ComponentActivity() {
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
                     item {
-                        CustomCheckBox(onCheckedChange = setCheck, checked = check)
+                        CheckBoxWithText(onCheckedChange = setCheck, checked = check, text = "Check this box.")
                     }
 //                    item {
 //                        OTPView {}
