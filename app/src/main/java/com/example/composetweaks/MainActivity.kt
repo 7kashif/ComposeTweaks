@@ -30,8 +30,11 @@ class MainActivity : ComponentActivity() {
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
                     item {
-                        CheckBoxWithText(onCheckedChange = setCheck, checked = check, text = "Check this box.")
+                        RadioButtonGroupExample()
                     }
+//                    item {
+//                        CheckBoxWithText(onCheckedChange = setCheck, checked = check, text = "Check this box.")
+//                    }
 //                    item {
 //                        OTPView {}
 //                    }
