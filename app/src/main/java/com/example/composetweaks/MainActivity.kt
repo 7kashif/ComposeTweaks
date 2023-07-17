@@ -32,24 +32,24 @@ class MainActivity : ComponentActivity() {
                     item {
                         RadioButtonGroupExample()
                     }
-//                    item {
-//                        CheckBoxWithText(onCheckedChange = setCheck, checked = check, text = "Check this box.")
-//                    }
-//                    item {
-//                        OTPView {}
-//                    }
-//                    item {
-//                        FilledSlider {}
-//                    }
-//                    item {
-//                        RatingBarEditable {}
-//                    }
-//                    item{
-//                        ConfettiAnimation()
-//                    }
-//                    item {
-//                        OwlCarousal()
-//                    }
+                    item {
+                        CheckBoxWithText(onCheckedChange = setCheck, checked = check, text = "Check this box.")
+                    }
+                    item {
+                        OTPView {}
+                    }
+                    item {
+                        FilledSlider {}
+                    }
+                    item {
+                        RatingBarEditable {}
+                    }
+                    item{
+                        ConfettiAnimation()
+                    }
+                    item {
+                        OwlCarousal()
+                    }
                 }
             }
         }
