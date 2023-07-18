@@ -6,7 +6,6 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.PagerState
 import androidx.compose.foundation.pager.rememberPagerState
@@ -42,7 +41,9 @@ fun OwlCarousal() {
                 .height(200.dp)
                 .fillMaxWidth()
                 .background(pagerList[it % pagerList.size])
-        )
+        ){
+            //TODO ADD YOUR VIEWS HERE
+        }
     }
 }
 

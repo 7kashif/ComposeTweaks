@@ -22,35 +22,35 @@ class MainActivity : ComponentActivity() {
                 val (check, setCheck) = remember {
                     mutableStateOf(false)
                 }
-
-                LazyColumn(
-                    modifier = Modifier.fillMaxSize(),
-                    verticalArrangement = Arrangement.spacedBy(32.dp),
-                    contentPadding = PaddingValues(vertical = 16.dp, horizontal = 24.dp),
-                    horizontalAlignment = Alignment.CenterHorizontally
-                ) {
-                    item {
-                        RadioButtonGroupExample()
-                    }
-                    item {
-                        CheckBoxWithText(onCheckedChange = setCheck, checked = check, text = "Check this box.")
-                    }
-                    item {
-                        OTPView {}
-                    }
-                    item {
-                        FilledSlider {}
-                    }
-                    item {
-                        RatingBarEditable {}
-                    }
-                    item{
-                        ConfettiAnimation()
-                    }
-                    item {
-                        OwlCarousal()
-                    }
-                }
+                AnimatedList()
+//                LazyColumn(
+//                    modifier = Modifier.fillMaxSize(),
+//                    verticalArrangement = Arrangement.spacedBy(32.dp),
+//                    contentPadding = PaddingValues(vertical = 16.dp, horizontal = 24.dp),
+//                    horizontalAlignment = Alignment.CenterHorizontally
+//                ) {
+//                    item {
+//                        RadioButtonGroupExample()
+//                    }
+//                    item {
+//                        CheckBoxWithText(onCheckedChange = setCheck, checked = check, text = "Check this box.")
+//                    }
+//                    item {
+//                        OTPView {}
+//                    }
+//                    item {
+//                        FilledSlider {}
+//                    }
+//                    item {
+//                        RatingBarEditable {}
+//                    }
+//                    item{
+//                        ConfettiAnimation()
+//                    }
+//                    item {
+//                        OwlCarousal()
+//                    }
+//                }
             }
         }
     }
