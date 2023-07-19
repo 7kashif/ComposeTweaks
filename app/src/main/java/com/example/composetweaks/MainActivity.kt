@@ -3,15 +3,8 @@ package com.example.composetweaks
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.ui.Alignment
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.unit.dp
 import com.example.composetweaks.ui.theme.ComposeTweaksTheme
 
 class MainActivity : ComponentActivity() {
@@ -22,7 +15,9 @@ class MainActivity : ComponentActivity() {
                 val (check, setCheck) = remember {
                     mutableStateOf(false)
                 }
-                AnimatedList()
+                LinkedInReaction()
+//                DragPeak()
+//                AnimatedLazyColumn()
 //                LazyColumn(
 //                    modifier = Modifier.fillMaxSize(),
 //                    verticalArrangement = Arrangement.spacedBy(32.dp),
