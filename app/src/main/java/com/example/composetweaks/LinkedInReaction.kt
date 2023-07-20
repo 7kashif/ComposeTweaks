@@ -1,6 +1,5 @@
 package com.example.composetweaks
 
-import android.util.Log
 import androidx.compose.animation.core.Spring
 import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.animation.core.spring
@@ -54,17 +53,6 @@ fun LinkedInReaction() {
         }
     }
 
-    val x1 by getAnimationsX(startAnimation = animationsToggle[0], count = 0)
-    val x2 by getAnimationsX(startAnimation = animationsToggle[1], count = 1)
-    val x3 by getAnimationsX(startAnimation = animationsToggle[2], count = 2)
-    val x4 by getAnimationsX(startAnimation = animationsToggle[3], count = 3)
-    val x5 by getAnimationsX(startAnimation = animationsToggle[4], count = 4)
-    val x6 by getAnimationsX(startAnimation = animationsToggle[5], count = 5)
-
-    val listX = remember {
-        mutableStateListOf(x1,x2,x3,x4,x5,x6)
-    }
-
     LaunchedEffect(key1 = startAnimation) {
         if (startAnimation) {
             repeat(reactions.size) { index ->
@@ -79,6 +67,10 @@ fun LinkedInReaction() {
         }
     }
 
+    val xOffSets = getListOfXAnimations(animationToggles = animationsToggle)
+    val yOffSets = getListOfYAnimations(animationToggles = animationsToggle)
+    val sizes = getSizes(animationToggles = animationsToggle)
+
     Box(
         modifier = Modifier.fillMaxSize(),
         contentAlignment = Alignment.Center
@@ -91,11 +83,8 @@ fun LinkedInReaction() {
             reactions.forEachIndexed { index, item ->
                 Image(
                     modifier = Modifier
-                        .offset(
-                            x = listX[index],
-                            y = yOffSets(animationsToggle)[index].value
-                        )
-                        .size(sizes(animationsToggle)[index].value),
+                        .offset(x = xOffSets[index].value, y = yOffSets[index].value)
+                        .size(sizes[index].value),
                     painter = painterResource(id = item),
                     contentDescription = null,
                     contentScale = ContentScale.Fit
@@ -128,12 +117,6 @@ fun getAnimationsX(startAnimation: Boolean, count: Int) = animateDpAsState(
 )
 
 @Composable
-fun xOffSets(animationToggles: List<Boolean>) = List(reactions.size) {
-    Log.e("testing", "called again.")
-    getAnimationsX(startAnimation = animationToggles[it], count = it)
-}
-
-@Composable
 fun getAnimationsY(startAnimation: Boolean) = animateDpAsState(
     targetValue = if (startAnimation) -(SIZE + 16.dp) else 16.dp,
     animationSpec = spring(
@@ -141,11 +124,6 @@ fun getAnimationsY(startAnimation: Boolean) = animateDpAsState(
         stiffness = Spring.StiffnessLow
     )
 )
-
-@Composable
-fun yOffSets(animationToggles: List<Boolean>) = List(reactions.size) {
-    getAnimationsY(startAnimation = animationToggles[it])
-}
 
 @Composable
 fun getAnimatedSize(startAnimation: Boolean) = animateDpAsState(
@@ -157,6 +135,16 @@ fun getAnimatedSize(startAnimation: Boolean) = animateDpAsState(
 )
 
 @Composable
-fun sizes(animationToggles: List<Boolean>) =  List(reactions.size) {
+fun getListOfXAnimations(animationToggles: List<Boolean>) = List(reactions.size) {
+    getAnimationsX(startAnimation = animationToggles[it], count = it)
+}
+
+@Composable
+fun getListOfYAnimations(animationToggles: List<Boolean>) = List(reactions.size) {
+    getAnimationsY(startAnimation = animationToggles[it])
+}
+
+@Composable
+fun getSizes(animationToggles: List<Boolean>) = List(reactions.size) {
     getAnimatedSize(startAnimation = animationToggles[it])
 }
