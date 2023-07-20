@@ -54,6 +54,17 @@ fun LinkedInReaction() {
         }
     }
 
+    val x1 by getAnimationsX(startAnimation = animationsToggle[0], count = 0)
+    val x2 by getAnimationsX(startAnimation = animationsToggle[1], count = 1)
+    val x3 by getAnimationsX(startAnimation = animationsToggle[2], count = 2)
+    val x4 by getAnimationsX(startAnimation = animationsToggle[3], count = 3)
+    val x5 by getAnimationsX(startAnimation = animationsToggle[4], count = 4)
+    val x6 by getAnimationsX(startAnimation = animationsToggle[5], count = 5)
+
+    val listX = remember {
+        mutableStateListOf(x1,x2,x3,x4,x5,x6)
+    }
+
     LaunchedEffect(key1 = startAnimation) {
         if (startAnimation) {
             repeat(reactions.size) { index ->
@@ -68,14 +79,6 @@ fun LinkedInReaction() {
         }
     }
 
-    val xOffSets = getListOfXAnimations(animationToggles = animationsToggle)
-    val yOffSets = List(reactions.size) {
-        getAnimationsY(startAnimation = animationsToggle[it])
-    }
-    val sizes = List(reactions.size) {
-        getAnimatedSize(startAnimation = animationsToggle[it])
-    }
-
     Box(
         modifier = Modifier.fillMaxSize(),
         contentAlignment = Alignment.Center
@@ -88,8 +91,11 @@ fun LinkedInReaction() {
             reactions.forEachIndexed { index, item ->
                 Image(
                     modifier = Modifier
-                        .offset(x = xOffSets[index].value, y = yOffSets[index].value)
-                        .size(sizes[index].value),
+                        .offset(
+                            x = listX[index],
+                            y = yOffSets(animationsToggle)[index].value
+                        )
+                        .size(sizes(animationsToggle)[index].value),
                     painter = painterResource(id = item),
                     contentDescription = null,
                     contentScale = ContentScale.Fit
@@ -122,8 +128,8 @@ fun getAnimationsX(startAnimation: Boolean, count: Int) = animateDpAsState(
 )
 
 @Composable
-fun getListOfXAnimations(animationToggles: List<Boolean>) = List(reactions.size) {
-    Log.e("testing","called again.")
+fun xOffSets(animationToggles: List<Boolean>) = List(reactions.size) {
+    Log.e("testing", "called again.")
     getAnimationsX(startAnimation = animationToggles[it], count = it)
 }
 
@@ -137,6 +143,11 @@ fun getAnimationsY(startAnimation: Boolean) = animateDpAsState(
 )
 
 @Composable
+fun yOffSets(animationToggles: List<Boolean>) = List(reactions.size) {
+    getAnimationsY(startAnimation = animationToggles[it])
+}
+
+@Composable
 fun getAnimatedSize(startAnimation: Boolean) = animateDpAsState(
     targetValue = if (startAnimation) SIZE else 0.dp,
     animationSpec = spring(
@@ -144,3 +155,8 @@ fun getAnimatedSize(startAnimation: Boolean) = animateDpAsState(
         stiffness = Spring.StiffnessLow
     )
 )
+
+@Composable
+fun sizes(animationToggles: List<Boolean>) =  List(reactions.size) {
+    getAnimatedSize(startAnimation = animationToggles[it])
+}

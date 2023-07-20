@@ -1,10 +1,8 @@
 package com.example.composetweaks
 
-import android.util.Log
 import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.animation.core.animateFloatAsState
-import androidx.compose.animation.core.animateIntAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
@@ -23,35 +21,40 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalConfiguration
-import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-import kotlin.math.PI
-import kotlin.math.cos
-import kotlin.math.sin
-import kotlin.math.tan
 
 @Composable
 fun CurvedPathAnimation() {
-    val width = LocalConfiguration.current.screenWidthDp.dp
-    val height = LocalConfiguration.current.screenHeightDp.dp
+    val width = LocalConfiguration.current.screenWidthDp.dp - 32.dp
+    val height = LocalConfiguration.current.screenHeightDp.dp - 32.dp
 
     var animate by remember {
         mutableStateOf(false)
     }
 
-    val y by animateDpAsState(
-        targetValue = if (animate) height else 1.dp,
-        animationSpec = tween(durationMillis = 5000, easing = LinearEasing)
+    val frac by animateFloatAsState(
+        targetValue = if (animate) 1f else 0f,
+        animationSpec = tween(durationMillis = 5000)
+    )
+    val delta by animateFloatAsState(
+        targetValue = if (animate) 0.6f else 0f,
+        animationSpec = tween(durationMillis = 5000)
     )
 
-    val x0 by remember {
-        derivedStateOf {
-            val t = (y.value / height.value)
-            val s = t * width.value
-            Log.e("test", s.toString())
-            s.dp
-        }
+    var y by remember {
+        mutableStateOf(0f)
     }
+    var x by remember {
+        mutableStateOf(0f)
+    }
+
+    LaunchedEffect(key1 = frac, block = {
+        // Horizontal movement from left to right (0% to 50% progress)
+        x = (frac - delta) * width.value
+
+        // Vertical movement from top to bottom (50% to 100% progress)
+        y = frac * height.value
+    })
 
     LaunchedEffect(key1 = Unit, block = {
         animate = true
@@ -62,7 +65,7 @@ fun CurvedPathAnimation() {
     ) {
         Box(
             modifier = Modifier
-                .offset(x0, y)
+                .offset(x.dp, y.dp)
                 .clip(CircleShape)
                 .size(32.dp)
                 .background(Color.DarkGray)
