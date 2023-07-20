@@ -12,41 +12,7 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         setContent {
             ComposeTweaksTheme {
-                val (check, setCheck) = remember {
-                    mutableStateOf(false)
-                }
-//                CurvedPathAnimation()
-                LinkedInReaction()
-//                DragPeak()
-//                AnimatedLazyColumn()
-//                LazyColumn(
-//                    modifier = Modifier.fillMaxSize(),
-//                    verticalArrangement = Arrangement.spacedBy(32.dp),
-//                    contentPadding = PaddingValues(vertical = 16.dp, horizontal = 24.dp),
-//                    horizontalAlignment = Alignment.CenterHorizontally
-//                ) {
-//                    item {
-//                        RadioButtonGroupExample()
-//                    }
-//                    item {
-//                        CheckBoxWithText(onCheckedChange = setCheck, checked = check, text = "Check this box.")
-//                    }
-//                    item {
-//                        OTPView {}
-//                    }
-//                    item {
-//                        FilledSlider {}
-//                    }
-//                    item {
-//                        RatingBarEditable {}
-//                    }
-//                    item{
-//                        ConfettiAnimation()
-//                    }
-//                    item {
-//                        OwlCarousal()
-//                    }
-//                }
+                AnimatedLazyColumn()
             }
         }
     }

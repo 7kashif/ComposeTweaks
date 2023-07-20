@@ -6,6 +6,7 @@ import androidx.compose.animation.core.tween
 import androidx.compose.animation.shrinkVertically
 import androidx.compose.animation.slideInHorizontally
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -63,7 +64,8 @@ fun AnimatedLazyColumn(
 
     LazyColumn(
         modifier = Modifier.fillMaxSize(),
-        state = listState
+        state = listState,
+        verticalArrangement = Arrangement.spacedBy(4.dp)
     ) {
         items(
             items = list,
