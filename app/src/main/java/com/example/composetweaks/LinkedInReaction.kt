@@ -1,5 +1,6 @@
 package com.example.composetweaks
 
+import android.util.Log
 import androidx.compose.animation.core.Spring
 import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.animation.core.spring
@@ -41,6 +42,39 @@ private val SIZE = 48.dp
 
 @Composable
 fun LinkedInReaction() {
+    var startAnimation by remember {
+        mutableStateOf(false)
+    }
+
+    val animationsToggle = remember {
+        mutableStateListOf<Boolean>().apply {
+            repeat(reactions.size) {
+                add(false)
+            }
+        }
+    }
+
+    LaunchedEffect(key1 = startAnimation) {
+        if (startAnimation) {
+            repeat(reactions.size) { index ->
+                animationsToggle[index] = true
+                delay(130)
+            }
+        } else {
+            repeat(reactions.size) { index ->
+                animationsToggle[index] = false
+                delay(100)
+            }
+        }
+    }
+
+    val xOffSets = getListOfXAnimations(animationToggles = animationsToggle)
+    val yOffSets = List(reactions.size) {
+        getAnimationsY(startAnimation = animationsToggle[it])
+    }
+    val sizes = List(reactions.size) {
+        getAnimatedSize(startAnimation = animationsToggle[it])
+    }
 
     Box(
         modifier = Modifier.fillMaxSize(),
@@ -51,42 +85,6 @@ fun LinkedInReaction() {
                 .fillMaxWidth()
                 .padding(32.dp)
         ) {
-            var startAnimation by remember {
-                mutableStateOf(false)
-            }
-
-            val animationsToggle = remember {
-                mutableStateListOf<Boolean>().apply {
-                    repeat(reactions.size) {
-                        add(false)
-                    }
-                }
-            }
-
-            LaunchedEffect(key1 = startAnimation) {
-                if (startAnimation) {
-                    repeat(reactions.size) { index ->
-                        animationsToggle[index] = true
-                        delay(130)
-                    }
-                } else {
-                    repeat(reactions.size) { index ->
-                        animationsToggle[index] = false
-                        delay(100)
-                    }
-                }
-            }
-
-            val xOffSets = List(reactions.size) {
-                getAnimationsX(startAnimation = animationsToggle[it], count = it)
-            }
-            val yOffSets = List(reactions.size) {
-                getAnimationsY(startAnimation = animationsToggle[it])
-            }
-            val sizes = List(reactions.size) {
-                getAnimatedSize(startAnimation = animationsToggle[it])
-            }
-
             reactions.forEachIndexed { index, item ->
                 Image(
                     modifier = Modifier
@@ -122,6 +120,12 @@ fun getAnimationsX(startAnimation: Boolean, count: Int) = animateDpAsState(
         stiffness = Spring.StiffnessLow
     )
 )
+
+@Composable
+fun getListOfXAnimations(animationToggles: List<Boolean>) = List(reactions.size) {
+    Log.e("testing","called again.")
+    getAnimationsX(startAnimation = animationToggles[it], count = it)
+}
 
 @Composable
 fun getAnimationsY(startAnimation: Boolean) = animateDpAsState(

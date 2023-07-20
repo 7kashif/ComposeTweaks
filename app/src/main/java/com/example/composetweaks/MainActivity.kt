@@ -15,7 +15,8 @@ class MainActivity : ComponentActivity() {
                 val (check, setCheck) = remember {
                     mutableStateOf(false)
                 }
-                LinkedInReaction()
+                CurvedPathAnimation()
+//                LinkedInReaction()
 //                DragPeak()
 //                AnimatedLazyColumn()
 //                LazyColumn(
