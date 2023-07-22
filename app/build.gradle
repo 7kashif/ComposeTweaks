@@ -70,4 +70,6 @@ dependencies {
     implementation 'com.google.accompanist:accompanist-pager-indicators:0.31.0-alpha'
 
     implementation 'com.google.accompanist:accompanist-placeholder-material:0.31.0-alpha'
+
+    implementation 'io.coil-kt:coil-compose:2.2.2'
 }

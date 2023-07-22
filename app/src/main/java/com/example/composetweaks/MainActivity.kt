@@ -13,7 +13,7 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         setContent {
             ComposeTweaksTheme {
-                SegmentedLazyColumn()
+                ClubbedPhotos()
             }
         }
     }
