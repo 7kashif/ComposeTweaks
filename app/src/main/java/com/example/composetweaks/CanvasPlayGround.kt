@@ -1,11 +1,7 @@
 package com.example.composetweaks
 
-import android.util.Log
-import androidx.compose.animation.core.InfiniteRepeatableSpec
 import androidx.compose.animation.core.LinearEasing
-import androidx.compose.animation.core.RepeatMode
-import androidx.compose.animation.core.animateFloat
-import androidx.compose.animation.core.rememberInfiniteTransition
+import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.layout.fillMaxSize
@@ -15,15 +11,19 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.asAndroidPath
-import androidx.compose.ui.graphics.drawscope.Stroke
+import androidx.compose.ui.graphics.drawscope.drawIntoCanvas
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.core.graphics.flatten
 import kotlinx.coroutines.delay
+
+private const val DELAY = 1000
 
 @Composable
 fun CanvasPlayGround() {
@@ -55,36 +55,60 @@ fun CanvasPlayGround() {
     }
 
     val animatedPath = remember {
-       mutableStateListOf<Path>()
+        mutableStateListOf<Path>()
     }
 
-    LaunchedEffect(key1 = Unit) {
-        path.asAndroidPath().flatten().forEach { seg ->
-            val startX = seg.start.x
-            val endX = seg.end.x
-            val startY = seg.start.y
-            val endY = seg.end.y
+    var animate by remember {
+        mutableStateOf(false)
+    }
 
-            val p = Path().apply {
-                moveTo(seg.start.x, seg.start.y)
-                lineTo(seg.end.x, seg.end.y)
-            }
-            animatedPath.add(p)
-            delay(60)
+    val offSets = remember {
+        mutableStateListOf(0f, 0f, 0f, 0f)
+    }
+
+    val startX by animateFloatAsState(
+        targetValue = offSets[0],
+        animationSpec = tween(durationMillis = DELAY, easing = LinearEasing)
+    )
+    val startY by animateFloatAsState(
+        targetValue = offSets[1],
+        animationSpec = tween(durationMillis = DELAY, easing = LinearEasing)
+    )
+    val endX by animateFloatAsState(
+        targetValue = offSets[2],
+        animationSpec = tween(durationMillis = DELAY, easing = LinearEasing)
+    )
+    val endY by animateFloatAsState(
+        targetValue = offSets[3],
+        animationSpec = tween(durationMillis = DELAY, easing = LinearEasing)
+    )
+
+    LaunchedEffect(key1 = Unit) {
+        animate = true
+        path.asAndroidPath().flatten().forEach { seg ->
+            val a = seg.start.x
+            val b = seg.start.y
+            val c = seg.end.x
+            val d = seg.end.y
+
+            offSets[0] = a
+            offSets[1] = b
+            offSets[2] = c
+            offSets[3] = d
+            delay(DELAY.toLong())
         }
     }
 
     Canvas(
         modifier = Modifier.fillMaxSize(),
         onDraw = {
-            animatedPath.forEach { path ->
-                drawPath(
-                    path = path,
+            drawIntoCanvas {
+                drawLine(
                     color = Color.Black,
-                    style = Stroke(
-                        width = 12f,
-                        cap = StrokeCap.Round
-                    )
+                    strokeWidth = 8f,
+                    cap = StrokeCap.Round,
+                    start = Offset(startX, startY),
+                    end = Offset(endX, endY)
                 )
             }
         }
@@ -92,20 +116,3 @@ fun CanvasPlayGround() {
 
 }
 
-/**
- * Function to get a partial path based on the current animated value.
- */
-fun getPartialPath(path: Path, animatedValue: Float): Path {
-    // The 'animatedValue' ranges from 0f to 1f representing the progress of animation.
-    // You need to calculate the length of each segment and determine which segment to draw
-    // based on the current animated value.
-
-    val partialPath = Path()
-    path.asAndroidPath().flatten().forEachIndexed { index,seg ->
-        seg.endFraction
-    }
-
-    // Add the segments you want to draw based on the animatedValue.
-
-    return partialPath
-}
