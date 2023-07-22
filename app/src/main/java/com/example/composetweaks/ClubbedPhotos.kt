@@ -18,12 +18,13 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
 
-private val listOfImages = listOf(
+val listOfImages = listOf(
     "https://images.unsplash.com/photo-1537420327992-d6e192287183?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w0Nzg2OTV8MHwxfHNlYXJjaHwxfHxzcGFjZXxlbnwwfHx8fDE2OTAwNTczNjh8MA&ixlib=rb-4.0.3&q=80&w=400",
     "https://images.unsplash.com/photo-1454789548928-9efd52dc4031?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w0Nzg2OTV8MHwxfHNlYXJjaHwyfHxzcGFjZXxlbnwwfHx8fDE2OTAwNTczNjh8MA&ixlib=rb-4.0.3&q=80&w=400",
     "https://images.unsplash.com/photo-1505506874110-6a7a69069a08?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w0Nzg2OTV8MHwxfHNlYXJjaHwzfHxzcGFjZXxlbnwwfHx8fDE2OTAwNTczNjh8MA&ixlib=rb-4.0.3&q=80&w=400",
@@ -74,10 +75,16 @@ fun ClubbedPhotos(
  * add this library for AsyncImage.
  */
 @Composable
-fun PhotoItem(uri: String, showOverLay: Boolean = false, num: Int = 0) {
+fun PhotoItem(
+    modifier: Modifier = Modifier,
+    uri: String,
+    imageHeight: Dp = 150.dp,
+    showOverLay: Boolean = false,
+    num: Int = 0
+) {
     Box(
         contentAlignment = Alignment.Center,
-        modifier = Modifier.height(150.dp)
+        modifier = modifier.height(imageHeight)
     ) {
         AsyncImage(
             model = ImageRequest.Builder(LocalContext.current).data(uri).crossfade(true).build(),
