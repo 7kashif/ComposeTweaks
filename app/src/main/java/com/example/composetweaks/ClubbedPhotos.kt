@@ -1,17 +1,23 @@
 package com.example.composetweaks
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.lazy.grid.GridCells
-import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
-import androidx.compose.foundation.lazy.grid.items
-import androidx.compose.foundation.lazy.grid.rememberLazyGridState
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateListOf
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -40,29 +46,53 @@ val listOfImages = listOf(
 
 @Composable
 fun ClubbedPhotos(
-    visiblePhotos: Int = 4 //number of images to be displayed before showing +[NUM] More overlay.
+    listOfPhotos: List<String> = listOfImages,
+    visiblePhotos: Int = 4, //number of images to be displayed before showing +[NUM] More overlay.
+    onClick: () -> Unit = {},
+    onMoreClicked: () -> Unit = {}
 ) {
 
-    val listState = rememberLazyGridState()
+    require(listOfPhotos.size >= visiblePhotos) {
+        "size of listOfPhotos should be greater than or equal to visiblePhotos."
+    }
 
-    LazyVerticalGrid(
-        columns = GridCells.Fixed(count = 2),
-        state = listState,
-        contentPadding = PaddingValues(8.dp),
-        verticalArrangement = Arrangement.spacedBy(8.dp),
-        horizontalArrangement = Arrangement.spacedBy(8.dp),
+    val chunkedList = remember {
+        mutableStateListOf<List<String>>()
+    }
+    var moreNumber by remember {
+        mutableStateOf(0)
+    }
+
+    LaunchedEffect(key1 = Unit, block = {
+        moreNumber = (listOfPhotos.size - visiblePhotos) + 1
+
+        listOfPhotos.subList(0, visiblePhotos).chunked(2).forEach {
+            chunkedList.add(it)
+        }
+
+    })
+
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(8.dp),
+        verticalArrangement = Arrangement.spacedBy(8.dp)
     ) {
-        if (listOfImages.size > visiblePhotos) {
-            items(visiblePhotos) { count ->
-                PhotoItem(
-                    uri = listOfImages[count],
-                    showOverLay = count == visiblePhotos - 1,
-                    num = (listOfImages.size - visiblePhotos) + 1
-                )
-            }
-        } else {
-            items(listOfImages) { item ->
-                PhotoItem(uri = item)
+        chunkedList.forEachIndexed { oIndex, items ->
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.spacedBy(8.dp)
+            ) {
+                items.forEachIndexed { index, item ->
+                    PhotoItem(
+                        uri = item,
+                        showOverLay = oIndex == chunkedList.size - 1 && index == items.size - 1 && visiblePhotos < listOfPhotos.size,
+                        num = moreNumber,
+                        modifier = Modifier.weight(1f),
+                        onClick = onClick,
+                        onMoreClicked = onMoreClicked
+                    )
+                }
             }
         }
     }
@@ -80,7 +110,9 @@ fun PhotoItem(
     uri: String,
     imageHeight: Dp = 150.dp,
     showOverLay: Boolean = false,
-    num: Int = 0
+    num: Int = 0,
+    onClick: () -> Unit = {},
+    onMoreClicked: () -> Unit = {}
 ) {
     Box(
         contentAlignment = Alignment.Center,
@@ -90,13 +122,17 @@ fun PhotoItem(
             model = ImageRequest.Builder(LocalContext.current).data(uri).crossfade(true).build(),
             contentDescription = uri,
             contentScale = ContentScale.FillBounds,
-            modifier = Modifier.fillMaxSize()
+            modifier = Modifier.fillMaxSize().clickable {
+                if(showOverLay.not())
+                    onClick()
+            }
         )
         if (showOverLay) {
             Box(
                 modifier = Modifier
                     .fillMaxSize()
                     .background(Color.Black.copy(alpha = 0.6f))
+                    .clickable { onMoreClicked() }
             )
             Text(
                 text = "+$num More",

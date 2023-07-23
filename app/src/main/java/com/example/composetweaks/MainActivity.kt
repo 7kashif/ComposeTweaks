@@ -6,6 +6,7 @@ import androidx.activity.compose.setContent
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.Surface
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -18,12 +19,11 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         setContent {
             ComposeTweaksTheme {
-               Box(
-                   modifier = Modifier.fillMaxSize(),
-                   contentAlignment = Alignment.Center
-               ) {
-                   OwlCarousal()
-               }
+               LazyColumn(content = {
+                   items(1) {
+                       ClubbedPhotos()
+                   }
+               })
             }
         }
     }
