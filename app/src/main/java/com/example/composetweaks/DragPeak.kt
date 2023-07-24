@@ -1,5 +1,6 @@
 package com.example.composetweaks
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.detectVerticalDragGestures
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -7,6 +8,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -25,13 +27,18 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.unit.times
+import com.example.composetweaks.ui.theme.Orange
 import kotlinx.coroutines.launch
 import kotlin.math.floor
 
-private val alphabets: List<String> = ('a'..'z').map { it.toString() }
+private val alphabets: List<String> = ('A'..'Z').map { it.toString() }
 
 @Composable
 fun DragPeak() {
+
+    val peakOffSet by remember {
+        mutableStateOf((-75).dp)
+    }
 
     var selectedAlphabet by remember {
         mutableStateOf("")
@@ -49,70 +56,114 @@ fun DragPeak() {
         }
     }
 
+    var listIndex by remember {
+        mutableStateOf(0)
+    }
+
+    val filteredList = remember {
+        mutableStateListOf<String>().apply { addAll(namesList) }
+    }
+
     val scope = rememberCoroutineScope()
+    val listState = rememberLazyListState()
 
     Box(
-        modifier = Modifier.fillMaxSize(),
-        contentAlignment = Alignment.CenterEnd
+        modifier = Modifier
+            .fillMaxSize()
+            .background(Color.Black),
     ) {
         Column(
             modifier = Modifier
+                .align(Alignment.CenterEnd)
                 .padding(16.dp)
                 .pointerInput(Unit) {
-                    this.detectVerticalDragGestures(
-                        onDragEnd = {
-                           scope.launch {
-                               selectedAlphabet = ""
-                               offSets.replaceAll { 0.dp }
-                           }
+                    this.detectVerticalDragGestures(onDragEnd = {
+                        scope.launch {
+                            selectedAlphabet = ""
+                            offSets.replaceAll { 0.dp }
+                            filteredList.clear()
+                            filteredList.addAll(namesList)
+                            listState.scrollToItem(listIndex)
                         }
-                    ) { change, _ ->
-                       scope.launch {
-                           val selectedPosition = change.position.y / itemSize
-                           val index = floor(selectedPosition).coerceIn(0f, 25f).toInt()
+                    }) { change, _ ->
+                        scope.launch {
+                            val selectedPosition = change.position.y / itemSize
+                            val selectedIndex = floor(selectedPosition)
+                                .coerceIn(0f, (alphabets.size - 1).toFloat())
+                                .toInt()
 
-                           selectedAlphabet = alphabets[index]
-                           if(index < 5) {
+                            selectedAlphabet = alphabets[selectedIndex]
+                            listIndex = (namesList.indexOfFirst {
+                                it.first() == selectedAlphabet.first()
+                            })
 
-                           } else if(index > alphabets.size - 6) {
+                            if (selectedIndex < 5) {
+                                repeat(5) {
+                                    val num = it + 1
+                                    offSets[selectedIndex + num] = peakOffSet + ((it + 1) * 15.dp)
+                                }
+                                repeat(selectedIndex + 1) {
+                                    offSets[selectedIndex - it] = peakOffSet + (it * 15.dp)
+                                }
+                            } else if (selectedIndex > alphabets.size - 6) {
+                                repeat(6) {
+                                    offSets[selectedIndex - it] = peakOffSet + (it * 15.dp)
+                                }
+                                val diff = (alphabets.size - 1) - selectedIndex
+                                repeat(diff) {
+                                    offSets[selectedIndex + it + 1] =
+                                        peakOffSet + ((it + 1) * 15.dp)
+                                }
+                            } else {
+                                repeat(6) {
+                                    offSets[selectedIndex - it] = peakOffSet + (it * 15.dp)
+                                }
+                                repeat(5) {
+                                    val num = it + 1
+                                    offSets[selectedIndex + num] = peakOffSet + ((it + 1) * 15.dp)
+                                }
+                            }
 
-                           } else {
-                               val offSet = (-75).dp
-                               offSets[index] = offSet
-                               repeat(5) {
-                                   val num = it + 1
-                                   offSets[index - num] = offSet + (it * 15.dp)
-                               }
-                               repeat(5) {
-                                   val num = it + 1
-                                   offSets[index + num] = offSet + (it * 15.dp)
-                               }
-                           }
-                       }
+                            filteredList.clear()
+                            filteredList.addAll(
+                                namesList.filter { it.first() == selectedAlphabet.first() }
+                            )
+
+                        }
                     }
-                },
-            horizontalAlignment = Alignment.End,
-            verticalArrangement = Arrangement.Center
+                }, horizontalAlignment = Alignment.End, verticalArrangement = Arrangement.Center
         ) {
-            alphabets.forEachIndexed {index, item ->
+            alphabets.forEachIndexed { index, item ->
                 Text(
                     text = item,
                     style = TextStyle(
-                        color = Color.DarkGray,
+                        color = if (item == selectedAlphabet) Orange else Color.White,
                         fontSize = 16.sp
                     ),
                     modifier = Modifier
+                        .offset(x = offSets[index])
                         .graphicsLayer {
                             itemSize = this.size.height
                         }
-                        .offset(
-                            x = offSets[index]
-                        )
                 )
             }
         }
 
+        SegmentedLazyColumn(
+            modifier = Modifier
+                .align(Alignment.CenterStart)
+                .padding(horizontal = 32.dp),
+            segmentBg = Color.Transparent,
+            itemBg = Color.Transparent,
+            listOfItems = filteredList,
+            listState = listState
+        )
     }
+}
 
+fun List<String>.coercedIndexes(from: Int, to: Int): List<Int> {
+    val coercedFrom = from.coerceIn(0, this.size - 1)
+    val coercedTo = to.coerceIn(0, this.size - 1)
 
+    return (coercedFrom..coercedTo).toList()
 }

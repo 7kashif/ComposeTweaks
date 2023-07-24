@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.Text
@@ -20,7 +21,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 
-private val namesList = mutableListOf(
+val namesList = mutableListOf(
     "Alice", "Alex", "Anna",
     "Bob", "Benjamin", "Bella",
     "Catherine", "Charlie", "Chloe",
@@ -51,30 +52,34 @@ private val namesList = mutableListOf(
 
 
 @Composable
-fun SegmentedLazyColumn() {
-    val listState = rememberLazyListState()
-
+fun SegmentedLazyColumn(
+    modifier: Modifier = Modifier,
+    listOfItems: List<String> = namesList,
+    segmentBg: Color = Color.DarkGray,
+    itemBg: Color = Color.Gray,
+    listState: LazyListState = rememberLazyListState()
+) {
     LazyColumn(
         state = listState,
-        modifier = Modifier.fillMaxSize(),
+        modifier = modifier,
     ) {
-        itemsIndexed(namesList) { index, item ->
-            if(index == 0)
-                SegmentItem(alphabet = item.first().toString())
-            else if (namesList[index].first() != namesList[index - 1].first())
-                SegmentItem(alphabet = item.first().toString())
+        itemsIndexed(listOfItems) { index, item ->
+            if (index == 0)
+                SegmentItem(alphabet = item.first().toString(), bg = segmentBg)
+            else if (listOfItems[index].first() != listOfItems[index - 1].first())
+                SegmentItem(alphabet = item.first().toString(), bg = segmentBg)
 
-            NameItem(name = item)
+            NameItem(name = item, bg = itemBg)
         }
     }
 
 }
 
 @Composable
-fun SegmentItem(alphabet: String) {
+fun SegmentItem(alphabet: String, bg: Color) {
     Row(
         modifier = Modifier
-            .background(Color.DarkGray)
+            .background(bg)
             .fillMaxWidth()
             .padding(8.dp),
         horizontalArrangement = Arrangement.Start,
@@ -84,21 +89,21 @@ fun SegmentItem(alphabet: String) {
             text = alphabet,
             style = TextStyle(
                 color = Color.White,
-                fontSize = 16.sp,
-                fontWeight = FontWeight.SemiBold
+                fontSize = 24.sp,
+                fontWeight = FontWeight.ExtraBold
             )
         )
     }
 }
 
 @Composable
-fun NameItem(name: String) {
+fun NameItem(name: String, bg: Color) {
     Row(
         modifier = Modifier
-            .background(Color.Gray)
+            .background(bg)
             .fillMaxWidth()
-            .padding(vertical = 16.dp),
-        horizontalArrangement = Arrangement.Center,
+            .padding(vertical = 16.dp, horizontal = 32.dp),
+        horizontalArrangement = Arrangement.Start,
         verticalAlignment = Alignment.CenterVertically
     ) {
         Text(
