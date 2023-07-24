@@ -34,7 +34,7 @@ import kotlin.math.floor
 private val alphabets: List<String> = ('A'..'Z').map { it.toString() }
 
 @Composable
-fun DragPeak() {
+fun DraggedScrollList() {
 
     val peakOffSet by remember {
         mutableStateOf((-75).dp)
@@ -159,11 +159,4 @@ fun DragPeak() {
             listState = listState
         )
     }
-}
-
-fun List<String>.coercedIndexes(from: Int, to: Int): List<Int> {
-    val coercedFrom = from.coerceIn(0, this.size - 1)
-    val coercedTo = to.coerceIn(0, this.size - 1)
-
-    return (coercedFrom..coercedTo).toList()
 }
