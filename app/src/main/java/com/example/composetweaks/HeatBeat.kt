@@ -1,6 +1,5 @@
 package com.example.composetweaks
 
-import android.util.Log
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
@@ -20,7 +19,6 @@ import kotlin.math.cos
 
 @Composable
 fun HeartBeat() {
-    var waveOffset by remember { mutableStateOf(0f) }
     var widthInFloat by remember {
         mutableStateOf(0f)
     }
@@ -44,7 +42,6 @@ fun HeartBeat() {
                 widthInFloat = size.width
             }
     ) {
-        val canvasWidth = size.width
         val canvasHeight = size.height
 
         val wavePath = Path()
@@ -53,8 +50,8 @@ fun HeartBeat() {
         val amplitude = 50f
         val frequency = 0.01f
 
-        for (x in 0..canvasWidth.toInt()) {
-            val y = canvasHeight / 2 + amplitude * cos(2 * PI * (x - waveOffset) * frequency)
+        for (x in 0..xCord.toInt()) {
+            val y = canvasHeight / 2 + amplitude * cos(2 * PI * x * frequency)
             wavePath.lineTo(x.toFloat(), y.toFloat())
         }
 
