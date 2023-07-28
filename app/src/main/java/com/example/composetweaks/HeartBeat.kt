@@ -21,8 +21,14 @@ import kotlin.math.PI
 import kotlin.math.cos
 
 @Composable
-fun HeartBeat() {
+fun HeartBeat(
+    amplitude: Float = 80f,
+    frequency: Float = 0.015f
+) {
     var widthInFloat by remember {
+        mutableStateOf(0f)
+    }
+    var heightInFloat by remember {
         mutableStateOf(0f)
     }
     var xCord by remember {
@@ -36,7 +42,6 @@ fun HeartBeat() {
     var startMovingBack by remember {
         mutableStateOf(false)
     }
-
 
     LaunchedEffect(Unit) {
         delay(50)
@@ -61,29 +66,23 @@ fun HeartBeat() {
             .offset(x = start.dp)
             .graphicsLayer {
                 widthInFloat = size.width
+                heightInFloat = size.height
             }
     ) {
-        val canvasWidth = size.width
-        val canvasHeight = size.height
-
         val wavePath = Path()
-        wavePath.moveTo(0f, canvasHeight / 2)
-
-
-        val amplitude = 80f
-        val frequency = 0.015f
+        wavePath.moveTo(0f, heightInFloat / 2)
 
         for (x in 0..xCord.toInt()) {
-            val y = canvasHeight / 2 + amplitude * cos(2 * PI * x * frequency)
-            wavePath.lineTo(x.toFloat(), y.toFloat())
+            val y =  (heightInFloat / 2 + amplitude * cos(2 * PI * x * frequency)).toFloat()
+            wavePath.lineTo(x.toFloat(), y)
         }
 
         drawPath(wavePath, color = Blue, style = Stroke(6f))
 
         drawLine(
             color = Blue,
-            start = Offset(0f, canvasHeight / 2),
-            end = Offset(canvasWidth + xCord, canvasHeight / 2),
+            start = Offset(0f, heightInFloat / 2),
+            end = Offset(widthInFloat + xCord, heightInFloat / 2),
             strokeWidth = 4f
         )
     }
