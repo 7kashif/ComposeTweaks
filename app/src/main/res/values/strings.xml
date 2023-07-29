@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">ComposeTweaks</string>
+
+    <string name="random_text">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed ac luctus urna, vitae pellentesque quam. Duis in lorem ut elit volutpat maximus eu ac nisi. Nulla facilisi. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia Curae; Nulla eget purus vel purus elementum ultricies sit amet et elit. Nam tristique lectus et dui porttitor, vel fermentum enim venenatis. Proin scelerisque turpis vitae neque sagittis, a bibendum mi dictum. Sed a libero sit amet ipsum tincidunt bibendum ac at arcu. Integer id posuere velit. Sed eu elit non urna luctus fringilla. Proin egestas, odio eget faucibus facilisis, elit est suscipit mauris, quis lacinia nulla tortor eu felis. Proin et neque quis ex gravida hendrerit. Duis eu diam orci. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas.</string>
 </resources>
