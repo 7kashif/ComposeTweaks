@@ -43,7 +43,11 @@ fun FlashLight() {
             modifier = Modifier
                 .fillMaxSize()
                 .pointerInput(Unit) {
-                    detectDragGestures { change, _ ->
+                    detectDragGestures(
+                        onDragEnd = {
+                            center = Offset(-radius, -radius)
+                        }
+                    ) { change, _ ->
                         center = change.position
                     }
                 },
