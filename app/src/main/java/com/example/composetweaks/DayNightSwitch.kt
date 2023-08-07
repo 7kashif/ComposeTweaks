@@ -2,6 +2,7 @@ package com.example.composetweaks
 
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.Spring
+import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.animateOffsetAsState
 import androidx.compose.animation.core.spring
 import androidx.compose.animation.core.tween
@@ -18,6 +19,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.drawscope.translate
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.input.pointer.pointerInput
 import kotlinx.coroutines.delay
@@ -73,6 +75,11 @@ fun DayNightSwitch() {
         animationSpec = tween(1000)
     )
 
+    val overLaySize by animateFloatAsState(
+        targetValue = if(day) 0f else 140f,
+        animationSpec = tween(1000)
+    )
+
     LaunchedEffect(Unit) {
         delay(30)
         tipOffSet = Offset(
@@ -125,9 +132,15 @@ fun DayNightSwitch() {
             color = circleColor
         )
 
+        drawCircle(
+            center = Offset((width / 2) - 40f, (height / 2) - 40f),
+            radius = overLaySize,
+            color = bgColor
+        )
+
         drawLine(
             color = circleColor,
-            start = Offset(width / 2, height / 2),
+            start = Offset(width / 2, (height / 2) + 140f),
             end = animateRetract,
             strokeWidth = 5f,
         )
