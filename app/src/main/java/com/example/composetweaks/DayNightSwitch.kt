@@ -106,7 +106,7 @@ fun DayNightSwitch() {
                     },
                     onDragStart = {
                         shouldDrag =
-                            ((it.x > (sw / 2) - 20 && it.x < (sw / 2) + 20) && (it.y > ((sh / 2) + 300f) - 20 && it.y < ((sh / 2) + 300f) + 20))
+
                     }
                 ) { change, _ ->
                     if (shouldDrag) {
@@ -152,4 +152,8 @@ fun DayNightSwitch() {
         )
 
     }
+}
+
+fun Offset.isInRange(xBound: Float, yBound: Float, delta: Float): Boolean {
+    return ((this.x > xBound - delta && this.x < xBound + delta) && (this.y > (yBound + 300f) - delta && this.y < (yBound + 300f) + delta))
 }
