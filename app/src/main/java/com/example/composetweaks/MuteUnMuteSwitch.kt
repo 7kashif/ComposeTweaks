@@ -33,24 +33,24 @@ fun MuteUnMuteSwitch() {
     }
 
     var isMute by remember {
-        mutableStateOf(true)
+        mutableStateOf(false)
     }
 
     val animateLine by animateOffsetAsState(
-        targetValue = if(isMute) Offset(hw - 150f, hh - 110) else Offset(hw + 80, hh + 130),
+        targetValue = if(isMute) Offset(hw + 80, hh + 130)  else Offset(hw - 150f, hh - 110),
         animationSpec = tween(DELAY)
     )
 
     val animateMuteLineAlpha by animateFloatAsState(
-        targetValue = if(isMute) 0f else 1f,
-        animationSpec = tween(DELAY)
-    )
-    val animateSoundLinesAlpha by animateFloatAsState(
         targetValue = if(isMute) 1f else 0f,
         animationSpec = tween(DELAY)
     )
+    val animateSoundLinesAlpha by animateFloatAsState(
+        targetValue = if(isMute) 0f else 1f,
+        animationSpec = tween(DELAY)
+    )
     val soundLinesOffSet by animateFloatAsState(
-        targetValue = if(isMute) 40f else 0f,
+        targetValue = if(isMute) 0f else 40f,
         animationSpec = tween(DELAY)
     )
 
