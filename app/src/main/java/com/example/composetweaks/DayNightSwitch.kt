@@ -28,6 +28,10 @@ val yellow = Color(0xFFFABB51)
 val dark = Color(0xFF191919)
 val light = Color(0xFFF7E8C3)
 
+private const val DELAY = 1000
+
+private const val CIRCLE_SIZE = 140f
+
 @Composable
 fun DayNightSwitch() {
 
@@ -66,18 +70,18 @@ fun DayNightSwitch() {
     }
 
     val bgColor by animateColorAsState(
-        targetValue = if(day) light else dark,
-        animationSpec = tween(1000)
+        targetValue = if (day) light else dark,
+        animationSpec = tween(DELAY)
     )
 
     val circleColor by animateColorAsState(
         targetValue = if (day) yellow else Color.White,
-        animationSpec = tween(1000)
+        animationSpec = tween(DELAY)
     )
 
     val overLaySize by animateFloatAsState(
-        targetValue = if(day) 0f else 140f,
-        animationSpec = tween(1000)
+        targetValue = if (day) 0f else CIRCLE_SIZE,
+        animationSpec = tween(DELAY)
     )
 
     LaunchedEffect(Unit) {
@@ -105,7 +109,11 @@ fun DayNightSwitch() {
                         }
                     },
                     onDragStart = {
-                        shouldDrag =
+                        shouldDrag = it.isInRange(
+                            xBound = sw / 2,
+                            yBound = (sh / 2) + 300f,
+                            delta = 30f
+                        )
 
                     }
                 ) { change, _ ->
@@ -128,7 +136,7 @@ fun DayNightSwitch() {
 
         drawCircle(
             center = Offset(width / 2, height / 2),
-            radius = 140f,
+            radius = CIRCLE_SIZE,
             color = circleColor
         )
 
@@ -155,5 +163,5 @@ fun DayNightSwitch() {
 }
 
 fun Offset.isInRange(xBound: Float, yBound: Float, delta: Float): Boolean {
-    return ((this.x > xBound - delta && this.x < xBound + delta) && (this.y > (yBound + 300f) - delta && this.y < (yBound + 300f) + delta))
+    return ((this.x > xBound - delta && this.x < xBound + delta) && (this.y > yBound - delta && this.y < yBound + delta))
 }
