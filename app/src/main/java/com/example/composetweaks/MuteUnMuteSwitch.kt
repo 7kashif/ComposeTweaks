@@ -111,7 +111,7 @@ fun MuteUnMuteSwitch() {
         if(isMute.not()) {
             soundLines.forEach {
                 pathsList.add(it)
-                delay(150)
+                delay(180)
             }
         } else {
             delay(150)
