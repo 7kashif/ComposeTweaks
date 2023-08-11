@@ -1,7 +1,6 @@
 package com.example.composetweaks
 
 import androidx.compose.animation.core.Spring
-import androidx.compose.animation.core.animate
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.spring
 import androidx.compose.animation.core.tween
@@ -121,7 +120,7 @@ fun PlayPauseButton() {
             ) {
                 drawRoundRect(
                     color = Color.Black,
-                    topLeft = Offset((hw - 100f) - pauseRotation, (hh - 120f) - pauseRotation),
+                    topLeft = Offset(hw - 100f, hh - 120f),
                     cornerRadius = CornerRadius(12f.dp.toPx(), 12f.dp.toPx()),
                     size = Size(30.dp.toPx(), 90f.dp.toPx()),
                     alpha = pauseAlpha
