@@ -55,6 +55,10 @@ fun ShowHide() {
             }
         }
     )
+    val eyeLashesLength by animateFloatAsState(
+        targetValue = if(show) 0f else 80f,
+        animationSpec = tween(eyeDelay.toInt())
+    )
 
 
     val eyeOffSet by animateFloatAsState(
@@ -97,6 +101,16 @@ fun ShowHide() {
                 )
             }
 
+            val eyeLashes = Path().apply {
+                moveTo(hw - 60f, hh + 70f)
+                relativeLineTo(dx = 0f, dy = eyeLashesLength)
+                moveTo(hw, hh + 80f)
+                relativeLineTo(dx = 0f, dy = eyeLashesLength)
+                moveTo(hw + 60f, hh + 70f)
+                relativeLineTo(dx = 0f, dy = eyeLashesLength)
+            }
+
+
             drawCircle(
                 color = Color.Black,
                 center = Offset(hw + eyeOffSet,hh),
@@ -111,6 +125,11 @@ fun ShowHide() {
             )
             drawPath(
                 path = path2,
+                color = Color.Black,
+                style = Stroke(width = 8.dp.toPx(), cap = StrokeCap.Round),
+            )
+            drawPath(
+                path = eyeLashes,
                 color = Color.Black,
                 style = Stroke(width = 8.dp.toPx(), cap = StrokeCap.Round),
             )
