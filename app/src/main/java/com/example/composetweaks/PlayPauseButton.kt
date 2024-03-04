@@ -29,7 +29,9 @@ import kotlinx.coroutines.delay
 private const val DELAY = 1000
 
 @Composable
-fun PlayPauseButton() {
+fun PlayPauseButton(
+    modifier: Modifier = Modifier
+) {
     var hw by remember {
         mutableStateOf(0f)
     }
@@ -79,7 +81,7 @@ fun PlayPauseButton() {
     )
 
     Canvas(
-        modifier = Modifier
+        modifier = modifier
             .fillMaxSize()
             .pointerInput(Unit) {
                 detectTapGestures {

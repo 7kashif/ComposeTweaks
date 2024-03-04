@@ -27,7 +27,9 @@ import kotlinx.coroutines.launch
 private const val eyeDelay: Long = 500
 
 @Composable
-fun ShowHide() {
+fun ShowHide(
+    modifier: Modifier = Modifier
+) {
     var show by remember {
         mutableStateOf(false)
     }
@@ -67,7 +69,7 @@ fun ShowHide() {
     )
 
     Canvas(
-        modifier = Modifier
+        modifier = modifier
             .fillMaxSize()
             .pointerInput(Unit) {
                 detectTapGestures {
