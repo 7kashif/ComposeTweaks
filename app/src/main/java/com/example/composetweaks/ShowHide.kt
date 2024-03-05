@@ -55,11 +55,11 @@ fun ShowHide(
                     eyeOffSetX = 0f
                 }
             }
-        }
+        }, label = ""
     )
     val eyeLashesLength by animateFloatAsState(
         targetValue = if(show) 0f else 80f,
-        animationSpec = tween(eyeDelay.toInt())
+        animationSpec = tween(eyeDelay.toInt()), label = ""
     )
 
 
