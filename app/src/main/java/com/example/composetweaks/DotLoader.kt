@@ -44,17 +44,22 @@ fun DotLoader(
         }
     }
 
-    Canvas(modifier = Modifier.wrapContentSize(), onDraw = {
-        repeat(dotsCount) {
-            drawCircle(
-                color = dotColor,
-                radius = dotSize,
-                center = Offset(
-                    dotSize + it * dotSize * spacingFactor,
-                    dotSize - offSets[it].value
+    Box(
+        modifier = Modifier.fillMaxSize(),
+        contentAlignment = Alignment.Center
+    ) {
+        Canvas(modifier = Modifier.wrapContentSize(), onDraw = {
+            repeat(dotsCount) {
+                drawCircle(
+                    color = dotColor,
+                    radius = dotSize,
+                    center = Offset(
+                        dotSize + it * dotSize * spacingFactor,
+                        dotSize - offSets[it].value
+                    )
                 )
-            )
-        }
-    })
+            }
+        })
+    }
 }
 
