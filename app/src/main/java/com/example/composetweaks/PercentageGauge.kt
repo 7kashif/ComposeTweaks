@@ -38,28 +38,20 @@ import kotlinx.coroutines.delay
 @Composable
 fun PercentageGauge(
     modifier: Modifier = Modifier,
-    percentage: Float = 84f
+    percentage: Float = 84f,
+    arcSegments: List<Triple<Float, String, Color>> = listOf(
+        Triple(50f, "Warning", RED),
+        Triple(65f, "Low", Orange),
+        Triple(80f, "Good", Green),
+        Triple(100f, "Great!", DarkGreen)
+    )
 ) {
     var slideValue by remember { mutableStateOf(0f) }
+
     var animateVisibility by remember { mutableStateOf(false) }
 
-    val (status, innerArcColor) = remember(percentage) {
-        when (percentage) {
-            in 0f..50f -> "Warning" to RED
-            in 50f..65f -> "Low" to Orange
-            in 65f..80f -> "Good" to Green
-            else -> "Great!" to DarkGreen
-        }
-    }
-
-    //Outer arc segments
-    val arcSegments = remember {
-        mutableStateListOf(
-            50f to RED,
-            65f to Orange,
-            80f to Green,
-            100f to DarkGreen
-        )
+    val percentageSegment = remember {
+        arcSegments.first { percentage <= it.first }
     }
 
     val animatedStatusAlpha by animateFloatAsState(
@@ -102,7 +94,7 @@ fun PercentageGauge(
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 Text(
-                    text = status,
+                    text = percentageSegment.second,
                     style = MaterialTheme.typography.body1,
                     modifier = Modifier.alpha(animatedStatusAlpha)
                 )
@@ -129,7 +121,7 @@ fun PercentageGauge(
 
                 // Draw inner arc foreground
                 drawArc(
-                    color = innerArcColor,
+                    color = percentageSegment.third,
                     startAngle = -180f,
                     sweepAngle = slideValue * 1.8f,
                     useCenter = false,
@@ -137,7 +129,7 @@ fun PercentageGauge(
                     size = Size(canvasWidth, canvasHeight * 2)
                 )
 
-                arcSegments.forEachIndexed { index, (start, color) ->
+                arcSegments.forEachIndexed { index, (start, _, color) ->
                     val previousSegment = if (index == 0) 0f else arcSegments[index - 1].first
                     drawArc(
                         color = color,
@@ -171,6 +163,4 @@ fun PercentageGauge(
             }
         }
     }
-
-
 }
