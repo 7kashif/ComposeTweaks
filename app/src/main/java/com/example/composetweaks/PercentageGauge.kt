@@ -1,6 +1,7 @@
 package com.example.composetweaks
 
 import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.core.spring
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.layout.Box
@@ -46,25 +47,27 @@ fun PercentageGauge(
         Triple(100f, "Great!", DarkGreen)
     )
 ) {
-    var slideValue by remember { mutableStateOf(0f) }
+    var startAnimation by remember { mutableStateOf(false) }
 
-    var animateVisibility by remember { mutableStateOf(false) }
+    val slideValue by animateFloatAsState(
+        targetValue = if (startAnimation) percentage else 0f,
+        animationSpec = tween(durationMillis = (percentage * 10).toInt()),
+        label = "slideValueAnimation"
+    )
+
+    val animatedStatusAlpha by animateFloatAsState(
+        targetValue = if (slideValue > percentage * 0.5) 1f else 0f,
+        animationSpec = tween(durationMillis = 1000),
+        label = "animateVisibility"
+    )
 
     val percentageSegment = remember {
         arcSegments.first { percentage <= it.first }
     }
 
-    val animatedStatusAlpha by animateFloatAsState(
-        targetValue = if (animateVisibility) 1f else 0f,
-        animationSpec = tween(durationMillis = 1000), label = "animatedStatusAlpha"
-    )
-
-    LaunchedEffect(key1 = Unit) {
-        for (i in 0..percentage.toInt()) {
-            slideValue = i.toFloat()
-            delay(10)
-        }
-        animateVisibility = true
+    LaunchedEffect(Unit) {
+        delay(100)
+        startAnimation = true
     }
 
     Box(
