@@ -52,7 +52,7 @@ fun SegmentedCylinder(
             radius = cylindersTopWidth.toPx()
         )
         var totalOffSet = 0f
-        cylindersList.forEachIndexed { index, cylinderStats ->
+        cylindersList.forEach {  cylinderStats ->
             totalOffSet += cylinderStats.first
 
             drawCylinder(
