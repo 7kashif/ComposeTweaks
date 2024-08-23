@@ -40,11 +40,11 @@ import kotlinx.coroutines.delay
 fun PercentageGauge(
     modifier: Modifier = Modifier,
     percentage: Float = 50f,
-    arcSegments: List<Triple<Float, String, Color>> = listOf(
-        Triple(50f, "Warning", RED),
-        Triple(65f, "Low", Orange),
-        Triple(80f, "Good", Green),
-        Triple(100f, "Great!", DarkGreen)
+    arcSegments: List<Pair<Float, Color>> = listOf(
+        Pair(50f, RED),
+        Pair(65f, Orange),
+        Pair(80f, Green),
+        Pair(100f, DarkGreen)
     )
 ) {
     var startAnimation by remember { mutableStateOf(false) }
@@ -53,12 +53,6 @@ fun PercentageGauge(
         targetValue = if (startAnimation) percentage else 0f,
         animationSpec = tween(durationMillis = (percentage * 10).toInt()),
         label = "slideValueAnimation"
-    )
-
-    val animatedStatusAlpha by animateFloatAsState(
-        targetValue = if (slideValue > percentage * 0.5) 1f else 0f,
-        animationSpec = tween(durationMillis = 1000),
-        label = "animateVisibility"
     )
 
     val percentageSegment = remember {
@@ -90,23 +84,13 @@ fun PercentageGauge(
                 style = MaterialTheme.typography.body1,
                 modifier = Modifier
                     .align(Alignment.BottomEnd)
-                    .offset(x = 40.dp, y = 8.dp)
+                    .offset(x = 44.dp, y = 8.dp)
             )
-            Column(
-                modifier = Modifier
-                    .align(Alignment.BottomCenter),
-                horizontalAlignment = Alignment.CenterHorizontally
-            ) {
-                Text(
-                    text = percentageSegment.second,
-                    style = MaterialTheme.typography.body1,
-                    modifier = Modifier.alpha(animatedStatusAlpha)
-                )
-                Text(
-                    text = "${slideValue.toInt()}%",
-                    style = MaterialTheme.typography.h4.copy(fontWeight = FontWeight.ExtraBold)
-                )
-            }
+            Text(
+                text = "${slideValue.toInt()}%",
+                style = MaterialTheme.typography.h4.copy(fontWeight = FontWeight.ExtraBold),
+                modifier = Modifier.align(Alignment.BottomCenter)
+            )
         }
         Canvas(
             modifier = Modifier
@@ -130,7 +114,7 @@ fun PercentageGauge(
 
             // Draw inner arc foreground
             drawArc(
-                color = percentageSegment.third,
+                color = percentageSegment.second,
                 startAngle = -180f,
                 sweepAngle = slideValue * 1.8f,
                 useCenter = false,
@@ -139,7 +123,7 @@ fun PercentageGauge(
                 topLeft = Offset(14.dp.toPx(), 14.dp.toPx())
             )
 
-            arcSegments.forEachIndexed { index, (start, _, color) ->
+            arcSegments.forEachIndexed { index, (start, color) ->
                 val previousSegment = if (index == 0) 0f else arcSegments[index - 1].first
                 drawArc(
                     color = color,
@@ -147,7 +131,7 @@ fun PercentageGauge(
                     sweepAngle = (start - previousSegment) * 1.8f,
                     useCenter = false,
                     style = Stroke(width = 8.dp.toPx()),
-                    size = Size(canvasWidth + 16.dp.toPx(), (canvasHeight * 2) + 16.dp.toPx() ),
+                    size = Size(canvasWidth + 16.dp.toPx(), (canvasHeight * 2) + 16.dp.toPx()),
                     topLeft = Offset((-8).dp.toPx(), (-8).dp.toPx())
                 )
             }
