@@ -23,10 +23,10 @@ import com.example.composetweaks.ui.theme.YellowCylinderBar
 import com.example.composetweaks.ui.theme.YellowCylinderTop
 
 val cylindersList: List<Triple<Float, Color, Color>> = listOf(
-    Triple(40f, YellowCylinderBar, YellowCylinderTop),
-    Triple(10f, CyanCylinderBar, CyanCylinderTop),
-    Triple(5f, RedCylinderBar, RedCylinderTop),
-    Triple(30f, GreenCylinderBar, GreenCylinderTop)
+    Triple(2f, YellowCylinderBar, YellowCylinderTop),
+    Triple(5f, CyanCylinderBar, CyanCylinderTop),
+    Triple(15f, RedCylinderBar, RedCylinderTop),
+    Triple(20f, GreenCylinderBar, GreenCylinderTop)
 )
 
 
