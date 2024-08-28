@@ -1,11 +1,8 @@
 package com.example.composetweaks
 
-import android.util.Log
-import androidx.compose.animation.animateContentSize
 import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
-import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.detectDragGestures
 import androidx.compose.foundation.layout.Arrangement
@@ -15,7 +12,9 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.Icon
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material3.Card
 import androidx.compose.material3.CircularProgressIndicator
@@ -30,9 +29,11 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.util.lerp
@@ -52,12 +53,26 @@ fun CardSwipeStack(
         mutableStateListOf(*Array(10) { "Item ${it + 1}" })
     }
 
+    var (swipeProgress, setSwipeProgress) = remember {
+        mutableStateOf(0f)
+    }
+
     Box(
-        modifier = modifier.fillMaxSize()
+        modifier = modifier.fillMaxSize(),
+        contentAlignment = Alignment.Center
     ) {
+        if (itemsList.isEmpty()) {
+            Text(
+                text = "You are all set!!! 👍",
+                style = MaterialTheme.typography.h6
+            )
+        }
+
         itemsList.forEachIndexed { index, item ->
             SwipeToMarkCard(
+                modifier = modifier.padding(if (index == itemsList.lastIndex) 0.dp else 32.dp * (1 - swipeProgress)),
                 onSwiped = {
+                    swipeProgress = 1f
                     itemsList.remove(item)
                 },
                 content = {
@@ -65,7 +80,8 @@ fun CardSwipeStack(
                         text = item,
                         style = MaterialTheme.typography.h6
                     )
-                }
+                },
+                onSwipe = setSwipeProgress
             )
         }
     }
@@ -75,6 +91,7 @@ fun CardSwipeStack(
 fun SwipeToMarkCard(
     modifier: Modifier = Modifier,
     onSwiped: () -> Unit,
+    onSwipe: (swipeProgress: Float) -> Unit,
     content: @Composable () -> Unit
 ) {
     var cardOffSet by remember {
@@ -83,14 +100,6 @@ fun SwipeToMarkCard(
 
     var animateCardBackTo0 by remember {
         mutableStateOf(false)
-    }
-
-    var rotationDegree by remember {
-        mutableStateOf(0f)
-    }
-
-    var overLayAlpha by remember {
-        mutableStateOf(0f)
     }
 
     var overLayColor by remember {
@@ -107,12 +116,6 @@ fun SwipeToMarkCard(
         label = "animatedRedAlha"
     )
 
-    val animatedOverLayAlpha by animateFloatAsState(
-        targetValue = overLayAlpha,
-        animationSpec = if (animateCardBackTo0) tween(DELAY) else tween(0),
-        label = "animatedRedAlha"
-    )
-
     val animatedOffsetX by animateDpAsState(
         targetValue = cardOffSet.x,
         animationSpec = if (animateCardBackTo0) tween(DELAY) else tween(0),
@@ -125,55 +128,49 @@ fun SwipeToMarkCard(
         label = "animateOffsetY"
     )
 
-    val animatedRotationDegree by animateFloatAsState(
-        targetValue = rotationDegree,
-        animationSpec = if (animateCardBackTo0) tween(DELAY) else tween(0),
-        label = "animatedRotationDegree"
-    )
-
     val scope = rememberCoroutineScope()
 
     Card(
         modifier = modifier
             .offset(animatedOffsetX, animatedOffsetY)
-            .rotate(animatedRotationDegree)
+            .rotate(animatedSwipeProgress * if (overLayColor == RED) -15f else -15f)
             .fillMaxSize()
             .pointerInput(key1 = Unit) {
                 detectDragGestures(
                     onDragEnd = {
-                        cardOffSet = DpOffset(0.dp, 0.dp)
-                        rotationDegree = 0f
-                        overLayAlpha = 0f
-                        animateCardBackTo0 = true
-
-                        Log.e("SwipeToMarkCard", "swipeProgress: $swipeProgress")
-
-                        if (abs(swipeProgress) >= 1f)
-                            onSwiped()
-
-                        swipeProgress = 0f
                         scope.launch {
-                            delay(DELAY.toLong())
-                            animateCardBackTo0 = false
+                            if (abs(swipeProgress) >= 1f) {
+                                cardOffSet = DpOffset(
+                                    cardOffSet.x + if (cardOffSet.x > 0.dp) 300.dp else (-300).dp,
+                                    cardOffSet.y
+                                )
+                                animateCardBackTo0 = true
+                                delay(DELAY.toLong())
+                                onSwiped()
+                            } else {
+                                cardOffSet = DpOffset(0.dp, 0.dp)
+                                animateCardBackTo0 = true
+                                swipeProgress = 0f
+                                delay(DELAY.toLong())
+                                animateCardBackTo0 = false
+                            }
                         }
                     }
                 ) { _, dragAmount ->
-                    val offSetX = cardOffSet.x + dragAmount.x.toDp()
-                    val offSetY = cardOffSet.y + dragAmount.y.toDp()
+                    scope.launch {
+                        val offSetX = cardOffSet.x + dragAmount.x.toDp()
+                        val offSetY = cardOffSet.y + dragAmount.y.toDp()
 
-                    rotationDegree = lerp(0f, 10f, -(offSetX.value / 300))
-                    swipeProgress = lerp(0f, 100f, offSetX.value / 30000)
+                        swipeProgress = lerp(0f, 1f, offSetX.value / 300).coerceIn(-1f, 1f)
 
-                    val lerpAlpha = lerp(0f, 1f, offSetX.value / 300)
+                        overLayColor = if (animatedSwipeProgress > 0)
+                            RED
+                        else
+                            Green
 
-                    overLayColor = if (lerpAlpha > 0)
-                        RED
-                    else
-                        Green
-
-                    overLayAlpha = abs(lerpAlpha).coerceIn(0f, 1f)
-
-                    cardOffSet = DpOffset(offSetX, offSetY)
+                        onSwipe(abs(swipeProgress))
+                        cardOffSet = DpOffset(offSetX, offSetY)
+                    }
                 }
             },
         shape = RoundedCornerShape(12.dp)
@@ -187,26 +184,42 @@ fun SwipeToMarkCard(
             Box(
                 modifier = Modifier
                     .fillMaxSize()
-                    .background(overLayColor.copy(alpha = animatedOverLayAlpha))
+                    .background(overLayColor.copy(alpha = abs(animatedSwipeProgress)))
             )
 
             Column(
                 modifier = Modifier
                     .align(if (overLayColor == RED) Alignment.TopStart else Alignment.TopEnd)
                     .padding(16.dp),
-                verticalArrangement = Arrangement.spacedBy(16.dp)
+                verticalArrangement = Arrangement.spacedBy(16.dp),
+                horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                CircularProgressIndicator(
-                    modifier = Modifier.size(64.dp),
-                    progress = animatedSwipeProgress,
-                    strokeWidth = 8.dp,
-                    color = Color.Black
-                )
+                Box(
+                    contentAlignment = Alignment.Center,
+                    modifier = Modifier
+                        .clip(CircleShape)
+                        .background(
+                            if (abs(animatedSwipeProgress) == 1f) Color.White else Color.Transparent,
+                        )
+                ) {
+                    CircularProgressIndicator(
+                        modifier = Modifier.size(64.dp),
+                        progress = animatedSwipeProgress,
+                        strokeWidth = 4.dp,
+                        color = Color.White
+                    )
+                    Icon(
+                        painter = painterResource(id = if (overLayColor == RED) R.drawable.ic_eye else R.drawable.ic_check_big),
+                        contentDescription = "",
+                        tint = if (abs(animatedSwipeProgress) == 1f) Color.Black else Color.White,
+                        modifier = Modifier.alpha(abs(animatedSwipeProgress))
+                    )
+                }
                 Text(
                     text = if (overLayColor == RED) "Mark as Unread" else "Mark as Read",
                     style = MaterialTheme.typography.h6,
-                    modifier = Modifier.alpha(animatedOverLayAlpha),
-                    color = Color.Black
+                    modifier = Modifier.alpha(abs(animatedSwipeProgress)),
+                    color = Color.White
                 )
             }
         }
