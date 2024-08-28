@@ -204,7 +204,7 @@ fun SwipeToMarkCard(
                 ) {
                     CircularProgressIndicator(
                         modifier = Modifier.size(64.dp),
-                        progress = animatedSwipeProgress,
+                        progress = abs(animatedSwipeProgress),
                         strokeWidth = 4.dp,
                         color = Color.White
                     )
