@@ -43,7 +43,17 @@ fun HighlightedTextSearch() {
             "The average smartphone user has over 80 apps installed on their device but typically uses only about 9 apps daily.",
             "The first mobile phone call was made on April 3, 1973, by Martin Cooper, a Motorola researcher and executive.",
             "In 2023, there were over 3.5 billion smartphone users worldwide, which is nearly 45% of the global population.",
-            "The most downloaded app of all time is Facebook, with over 5 billion downloads on the Google Play Store alone."
+            "The most downloaded app of all time is Facebook, with over 5 billion downloads on the Google Play Store alone.",
+            "The first SMS message was sent in 1992, and it simply read 'Merry Christmas'.",
+            "The Google Play Store was originally called the Android Market when it launched in 2008.",
+            "As of 2023, there are over 2.7 million apps available on the Google Play Store.",
+            "The most popular category of apps on the Apple App Store is games, followed by business and education apps.",
+            "In 2022, mobile apps generated over $935 billion in revenue globally.",
+            "The average mobile app loses 77% of its daily active users within the first three days after installation.",
+            "Mobile apps are expected to generate over $1 trillion in revenue by 2025.",
+            "The first mobile app was a simple calculator app, created in 1993 for the IBM Simon Personal Communicator.",
+            "In 2021, TikTok became the most downloaded app globally, surpassing Facebook and Instagram.",
+            "The average cost to develop a mobile app ranges from $10,000 to $500,000, depending on the complexity and features."
         )
     }
 
@@ -83,7 +93,7 @@ fun HighlightedTextSearch() {
             modifier = Modifier.fillMaxSize(),
             verticalArrangement = Arrangement.spacedBy(8.dp)
         ) {
-            if(filteredList.isNotEmpty() || query.isNotEmpty()) {
+            if (filteredList.isNotEmpty() || query.isNotEmpty()) {
                 items(filteredList) { item ->
                     HighlightableText(
                         text = item,
@@ -112,41 +122,32 @@ fun HighlightableText(
 ) {
     Text(
         text = buildAnnotatedString {
-            text.split(" ").forEach {split ->
-                if(split.contains(query, true)) {
-                    println("${split.split(query)}")
-                    split.splitString(query).forEach {
-                        if(it == query) {
-                            withStyle(
-                                style = SpanStyle(
-                                    background = Green
-                                )
-                            ) {
-                                append(it)
-                            }
-                        } else {
-                            append(it)
-                        }
+            text.splitString(query).forEach {
+                if (it.equals(query, true)) {
+                    withStyle(
+                        style = SpanStyle(
+                            background = Green
+                        )
+                    ) {
+                        append(it)
                     }
                 } else {
-                    append(split)
+                    append(it)
                 }
-
-                append(" ")
             }
         }
     )
 }
 
 fun String.splitString(subString: String): List<String> {
-    val index = this.indexOf(subString)
+    val index = this.indexOf(subString, ignoreCase = true)
     return if (index != -1) {
         listOf(
-            this.substring(0, index),
-            subString,
-            this.substring(index + subString.length)
+            this.substring(0, index), // Part before the substring
+            this.substring(index, index + subString.length), // The exact substring as it appears in the original string
+            this.substring(index + subString.length) // Part after the substring
         )
     } else {
-        listOf(this)
+        listOf(this) // Return the original string if the substring is not found
     }
 }
