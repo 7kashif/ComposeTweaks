@@ -123,19 +123,18 @@ fun OTPView(
                             }
                         }
                     },
-                colors = TextFieldDefaults.textFieldColors(
-                    textColor = Color.Black,
+                colors = TextFieldDefaults.colors(
+                    focusedTextColor = Color.Black,
                     focusedIndicatorColor = Color.Blue,
                     unfocusedIndicatorColor = Color.Gray,
                     cursorColor = Color.Transparent,
-                    containerColor = Color.White
+                    focusedContainerColor = Color.White
                 ),
                 shape = RoundedCornerShape(12.dp),
             )
         }
     }
 }
-
 
 fun String.tryGet(index: Int): String {
     return try {

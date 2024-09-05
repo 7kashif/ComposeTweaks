@@ -20,13 +20,13 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.util.lerp
 import kotlin.math.absoluteValue
 
-@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun OwlCarousal() {
-    val pagerState = rememberPagerState(Int.MAX_VALUE / 2)
+    val pagerState = rememberPagerState(Int.MAX_VALUE / 2) {
+        Int.MAX_VALUE
+    }
 
     HorizontalPager(
-        pageCount = Int.MAX_VALUE,
         modifier = Modifier.fillMaxWidth(),
         state = pagerState,
         contentPadding = PaddingValues(horizontal = 48.dp),
@@ -42,7 +42,6 @@ fun OwlCarousal() {
 }
 
 
-@OptIn(ExperimentalFoundationApi::class)
 fun Modifier.carouselTransition(page: Int, pagerState: PagerState) =
     graphicsLayer {
         val pageOffset =
