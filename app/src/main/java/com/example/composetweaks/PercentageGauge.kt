@@ -20,6 +20,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
+import androidx.compose.ui.geometry.CornerRadius
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
@@ -99,17 +100,15 @@ fun PercentageGauge(
             val canvasWidth = size.width
             val canvasHeight = size.height
 
-            println("canvasWidth: $canvasWidth >>> canvasHeight: $canvasHeight")
-
             // Draw inner arc background
             drawArc(
                 color = GREY,
                 startAngle = 0f,
                 sweepAngle = -180f,
                 useCenter = false,
-                style = Stroke(width = 28.dp.toPx()),
-                size = Size(canvasWidth - 28.dp.toPx(), (canvasHeight * 2) - 28.dp.toPx()),
-                topLeft = Offset(14.dp.toPx(), 14.dp.toPx())
+                style = Stroke(width = 24.dp.toPx(), pathEffect = PathEffect.dashPathEffect(floatArrayOf(0f,0f), phase = 0f)),
+                size = Size(canvasWidth - 24.dp.toPx(), (canvasHeight * 2) - 24.dp.toPx()),
+                topLeft = Offset(12.dp.toPx(), 12.dp.toPx())
             )
 
             // Draw inner arc foreground
@@ -118,9 +117,9 @@ fun PercentageGauge(
                 startAngle = -180f,
                 sweepAngle = slideValue * 1.8f,
                 useCenter = false,
-                style = Stroke(width = 28.dp.toPx()),
-                size = Size(canvasWidth - 28.dp.toPx(), (canvasHeight * 2) - 28.dp.toPx()),
-                topLeft = Offset(14.dp.toPx(), 14.dp.toPx())
+                style = Stroke(width = 24.dp.toPx(), pathEffect = PathEffect.cornerPathEffect(12.dp.toPx())),
+                size = Size(canvasWidth - 24.dp.toPx(), (canvasHeight * 2) - 24.dp.toPx()),
+                topLeft = Offset(12.dp.toPx(), 12.dp.toPx())
             )
 
             arcSegments.forEachIndexed { index, (start, color) ->
@@ -131,8 +130,8 @@ fun PercentageGauge(
                     sweepAngle = (start - previousSegment) * 1.8f,
                     useCenter = false,
                     style = Stroke(width = 8.dp.toPx()),
-                    size = Size(canvasWidth + 16.dp.toPx(), (canvasHeight * 2) + 16.dp.toPx()),
-                    topLeft = Offset((-8).dp.toPx(), (-8).dp.toPx())
+                    size = Size(canvasWidth + 20.dp.toPx(), (canvasHeight * 2) + 20.dp.toPx()),
+                    topLeft = Offset((-10).dp.toPx(), (-10).dp.toPx())
                 )
             }
 

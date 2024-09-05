@@ -21,7 +21,12 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         setContent {
             ComposeTweaksTheme {
-                AnimatedFAB()
+                Box(
+                    modifier = Modifier.fillMaxSize(),
+                    contentAlignment = Alignment.Center
+                ) {
+                    PercentageGauge()
+                }
             }
         }
     }
