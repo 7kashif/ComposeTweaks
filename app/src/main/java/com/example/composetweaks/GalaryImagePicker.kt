@@ -94,55 +94,6 @@ fun GalleryScreen() {
 }
 
 @Composable
-fun GalleryGrid() {
-    val context = LocalContext.current
-    val imageUris = remember {
-        mutableStateListOf<Uri>()
-    }
-
-
-    LaunchedEffect(Unit) {
-        imageUris.addAll(fetchGalleryImages(context))
-    }
-
-    Box(
-        modifier = Modifier.fillMaxSize()
-    ) {
-        DraggableDockedContent(
-            headerContent = {
-                Text(
-                    text = "Gallery se select karain!",
-                    style = MaterialTheme.typography.h6,
-                    color = Color.White
-                )
-            }
-        ) {
-            LazyVerticalGrid(
-                columns = GridCells.Fixed(4),
-                modifier = Modifier.fillMaxSize(),
-                horizontalArrangement = Arrangement.spacedBy(4.dp),
-                verticalArrangement = Arrangement.spacedBy(4.dp)
-            ) {
-                items(imageUris) { uri ->
-                    AsyncImage(
-                        model = ImageRequest.Builder(LocalContext.current).data(uri).crossfade(true)
-                            .build(),
-                        contentDescription = uri.toString(),
-                        contentScale = ContentScale.FillBounds,
-                        modifier = Modifier
-                            .clip(RoundedCornerShape(8.dp))
-                            .height(150.dp)
-                            .fillMaxWidth()
-                    )
-                }
-            }
-        }
-    }
-
-
-}
-
-@Composable
 fun ScrollableDockedContent() {
     val screenHeight = LocalConfiguration.current.screenHeightDp
     val density = LocalDensity.current
@@ -159,7 +110,17 @@ fun ScrollableDockedContent() {
             (screenHeight * 0.5).dp.toPx().toInt()
         })
     }
+    val screen60Perc by remember {
+        mutableIntStateOf(with(density) {
+            (screenHeight * 0.6).dp.toPx().toInt()
+        })
+    }
 
+    val screen30Perc by remember {
+        mutableIntStateOf(with(density) {
+            (screenHeight * 0.3).dp.toPx().toInt()
+        })
+    }
     var offsetY by remember {
         mutableIntStateOf(screen70Perc)
     }
@@ -279,11 +240,79 @@ fun ScrollableDockedContent() {
                             }
                         }
                     }
+                    .pointerInput(Unit) {
+                        detectDragGestures(
+                            onDragEnd = {
+                                shouldAnimate = true
+                                offsetY = if (offsetY > screen60Perc || offsetY < screen30Perc) {
+                                    with(density) {
+                                        (screenHeight * 0.75).dp
+                                            .toPx()
+                                            .toInt()
+                                    }
+                                } else {
+                                    0
+                                }
+                            }
+                        ) { _, dragAmount ->
+                            shouldAnimate = false
+                            offsetY += dragAmount.y.toInt()
+                        }
+                    }
             )
             LazyVerticalGrid(
                 columns = GridCells.Fixed(4),
                 modifier = Modifier.fillMaxSize(),
                 state = gridState,
+                horizontalArrangement = Arrangement.spacedBy(4.dp),
+                verticalArrangement = Arrangement.spacedBy(4.dp)
+            ) {
+                items(imageUris) { uri ->
+                    AsyncImage(
+                        model = ImageRequest.Builder(LocalContext.current).data(uri).crossfade(true)
+                            .build(),
+                        contentDescription = uri.toString(),
+                        contentScale = ContentScale.FillBounds,
+                        modifier = Modifier
+                            .clip(RoundedCornerShape(8.dp))
+                            .height(150.dp)
+                            .fillMaxWidth()
+                    )
+                }
+            }
+        }
+    }
+
+
+}
+
+@Composable
+fun GalleryGrid() {
+    val context = LocalContext.current
+    val imageUris = remember {
+        mutableStateListOf<Uri>()
+    }
+
+
+    LaunchedEffect(Unit) {
+        imageUris.addAll(fetchGalleryImages(context))
+    }
+
+    Box(
+        modifier = Modifier.fillMaxSize()
+    ) {
+        DraggableDockedContent(
+            headerContent = {
+                Text(
+                    text = "Gallery se select karain!",
+                    style = MaterialTheme.typography.h6,
+                    color = Color.White
+                )
+            }
+        ) {
+            LazyVerticalGrid(
+                columns = GridCells.Fixed(4),
+                modifier = Modifier.fillMaxSize(),
                 horizontalArrangement = Arrangement.spacedBy(4.dp),
                 verticalArrangement = Arrangement.spacedBy(4.dp)
             ) {
