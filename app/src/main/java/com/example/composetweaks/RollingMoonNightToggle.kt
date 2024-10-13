@@ -29,9 +29,9 @@ import androidx.compose.ui.unit.dp
 private const val DELAY = 500
 
 @Composable
-fun DayNightToggle(
+fun RollingMoonNightToggle(
     modifier: Modifier = Modifier,
-    height: Dp = 32.dp,
+    height: Dp = 40.dp,
     width: Dp = 96.dp
 ) {
     val density = LocalDensity.current
@@ -64,7 +64,7 @@ fun DayNightToggle(
     )
 
     val overlayCircleSize by animateFloatAsState(
-        targetValue = if (isNight) radiusPx - 8 else 0f,
+        targetValue = if (isNight) radiusPx - 12 else 0f,
         animationSpec = tween(durationMillis = DELAY, easing = LinearEasing),
         label = "color animation"
     )
@@ -101,7 +101,7 @@ fun DayNightToggle(
             drawCircle(
                 color = color,
                 radius = overlayCircleSize,
-                center = Offset(startOffSet -12, (size.height / 2) - 8)
+                center = Offset(startOffSet -14, (size.height / 2) - 8)
             )
         }
     }

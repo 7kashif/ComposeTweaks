@@ -100,6 +100,14 @@ fun ScrollableDockedContent() {
     val gridState = rememberLazyGridState()
     val scope = rememberCoroutineScope()
 
+    val screenHeightPx by remember {
+        mutableIntStateOf(
+            with(density) {
+                screenHeight.dp.toPx().toInt()
+            }
+        )
+    }
+
     val screen70Perc by remember {
         mutableIntStateOf(with(density) {
             (screenHeight * 0.75).dp.toPx().toInt()
@@ -244,12 +252,8 @@ fun ScrollableDockedContent() {
                         detectDragGestures(
                             onDragEnd = {
                                 shouldAnimate = true
-                                offsetY = if (offsetY > screen60Perc || offsetY < screen30Perc) {
-                                    with(density) {
-                                        (screenHeight * 0.75).dp
-                                            .toPx()
-                                            .toInt()
-                                    }
+                                offsetY = if (offsetY in screen50Perc..screenHeightPx) {
+                                    screen70Perc
                                 } else {
                                     0
                                 }
