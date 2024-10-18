@@ -9,10 +9,15 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.consumeWindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.safeDrawingPadding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.statusBars
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -25,9 +30,13 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.graphics.drawscope.rotate
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import androidx.core.view.WindowCompat
+import androidx.core.view.WindowInsetsCompat
+import kotlinx.coroutines.delay
 
 //sky blue color
 private val skyBlue = Color(0xFF87CEEB)
@@ -46,6 +55,12 @@ fun CloudyNightToggle(
     width: Dp = 156.dp
 ) {
     val density = LocalDensity.current
+    val context = LocalContext.current
+
+    LaunchedEffect(Unit) {
+        context as MainActivity
+        WindowCompat.getInsetsController(context.window, context.window.decorView).hide(WindowInsetsCompat.Type.statusBars())
+    }
 
     var isNight by remember {
         mutableStateOf(false)
@@ -98,7 +113,7 @@ fun CloudyNightToggle(
     )
 
     Box(
-        modifier = Modifier.fillMaxSize(),
+        modifier = Modifier.fillMaxSize().consumeWindowInsets(WindowInsets.statusBars),
         contentAlignment = Alignment.Center
     ) {
         Canvas(
