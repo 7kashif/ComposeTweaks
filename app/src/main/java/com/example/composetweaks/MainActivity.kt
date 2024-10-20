@@ -21,8 +21,8 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         setContent {
             ComposeTweaksTheme {
-
-                WalkthroughTestComposable()
+                AnimatedBarsScaffold()
+//                WalkthroughTestComposable()
 //              Column(
 //                  modifier = Modifier.padding(72.dp)
 //              ) {
